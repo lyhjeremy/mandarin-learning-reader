@@ -389,6 +389,10 @@ class App:
             selectbackground=p["btn_hi"], selectforeground=p["text"], relief="flat")
         self.chapter_list.pack(side="left", fill="both", expand=True)
         self.chapter_list.bind("<<ListboxSelect>>", self._on_chapter_pick)
+        # Don't let the listbox's built-in Space/Enter ("select active row") hijack
+        # the transport shortcuts and snap back to the chapter's first sentence.
+        self.chapter_list.bind("<space>", lambda e: (self.on_play(), "break")[1])
+        self.chapter_list.bind("<Return>", lambda e: (self.on_play(), "break")[1])
 
         # Stage (karaoke) ------------------------------------------------------
         self.stage = tk.Canvas(body, bg=p["bg"], highlightthickness=0, bd=0)
@@ -616,7 +620,9 @@ class App:
     # ── navigation ───────────────────────────────────────────────────────────
     def _on_chapter_pick(self, _e):
         sel = self.chapter_list.curselection()
-        if sel:
+        # Only load when a *different* chapter is chosen, so a stray re-selection
+        # of the current chapter can't reset you to its first sentence.
+        if sel and sel[0] != self.chapter_idx:
             self._load_chapter(sel[0], 0)
 
     def _load_chapter(self, ch_index, unit_index=0):

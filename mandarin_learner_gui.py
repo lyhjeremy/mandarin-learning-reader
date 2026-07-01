@@ -202,6 +202,10 @@ class App:
         cs.pack(side="right", fill="y")
         self.chapter_list.config(yscrollcommand=cs.set)
         self.chapter_list.bind("<<ListboxSelect>>", self._on_chapter_pick)
+        # Don't let the listbox's built-in Space/Enter ("select active row") hijack
+        # the transport shortcuts and snap back to the chapter's first sentence.
+        self.chapter_list.bind("<space>", lambda e: (self.on_play(), "break")[1])
+        self.chapter_list.bind("<Return>", lambda e: (self.on_play(), "break")[1])
 
         # Reader: previous / current / next, all centered.
         self.reader = tk.Frame(main)
@@ -403,7 +407,9 @@ class App:
     # ── Chapter / unit navigation ─────────────────────────────────────────────
     def _on_chapter_pick(self, _evt):
         sel = self.chapter_list.curselection()
-        if sel:
+        # Only load when a *different* chapter is chosen, so a stray re-selection
+        # of the current chapter can't reset you to its first sentence.
+        if sel and sel[0] != self.chapter_idx:
             self._load_chapter(sel[0], 0)
 
     def _load_chapter(self, ch_index, unit_index=0):
