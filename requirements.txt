@@ -1,0 +1,18 @@
+# Mandarin Learning Reader — Python dependencies
+# Python 3.9+.  Install with:  pip install -r requirements.txt
+
+# ── Core (app is useless without these) ──────────────────────────────
+edge-tts                      # Mandarin TTS (free MS Edge voices, online)
+ebooklib                      # read EPUB spine / TOC / metadata
+beautifulsoup4                # HTML -> clean text extraction
+pypinyin                      # per-character tone-marked pinyin
+faster-whisper                # offline local speech-to-text (recommended)
+sounddevice                   # microphone capture
+scipy                         # write WAV for Whisper
+pygame                        # play sentence audio (GUI)
+
+# ── Optional ─────────────────────────────────────────────────────────
+opencc-python-reimplemented   # Simplified <-> Traditional toggle + grade norm
+# openai-whisper              # alternative STT backend (heavier); auto-used
+#                             # as a fallback if faster-whisper is absent
+# ffmpeg (system binary)      # only if edge-tts rate isn't enough for 0.5x

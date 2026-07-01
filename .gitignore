@@ -1,0 +1,37 @@
+# =============================================================================
+#  Mandarin Learning Reader — what NOT to publish
+# =============================================================================
+
+# --- Source books: keep these out of the public repo (third-party copyright) ---
+*.epub
+
+# --- Audio (TTS cache MP3s, microphone recordings) ---
+*.mp3
+*.wav
+*.m4a
+*.aac
+*.ogg
+
+# --- Local user state written by the app (settings + resume position) ---
+.mandarin_learner.json
+
+# --- Sibling project's design doc (belongs to epub-to-audiobook, kept locally) ---
+AUDIOBOOK_GENERATION_PROJECT_OVERVIEW.md
+
+# --- Editor / tooling local state ---
+.claude/
+
+# --- Python / build artifacts ---
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+venv/
+.venv/
+build/
+dist/
+
+# --- Whisper model cache, if it ever lands in the tree ---
+models/
+*.bin
