@@ -95,9 +95,8 @@ on the transport bar:
 
 ![Graded view: the same sentence with characters coloured green, amber and red, and a 92% score shown.](docs/reader.png)
 
-Prefer a lighter look? A one-tap toggle switches the whole app to a light theme:
-
-![The same player in its light theme.](docs/reader-v2-light.png)
+Prefer a lighter look? A one-tap toggle (🌙 / ☀️) switches the whole app to a
+light theme.
 
 ## Getting started
 
