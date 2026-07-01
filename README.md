@@ -10,10 +10,14 @@ It's built for anyone learning to read and speak Mandarin who would rather learn
 from real books than flashcards. Everything runs on your own computer, for free —
 no account, no subscription, and your voice never leaves your machine.
 
+It comes in two looks: a **modern media-player interface** (recommended) that
+feels like a cross between Spotify, Audible, and a karaoke machine, and a
+**classic reader**. Both do exactly the same thing.
+
 > 🌐 **Prefer a quick, non-technical tour?** See the showcase page →
 > https://lyhjeremy.github.io/mandarin-learning-reader/
 
-![The reader after you've spoken a sentence: pinyin above every character, and each character marked green (right), amber (right sound), or red (missed).](docs/reader.png)
+![The modern player after you've spoken a sentence: the big karaoke line with pinyin above every character, each character marked green (right), amber (right sound), or red (missed), and your score on the transport bar.](docs/reader.png)
 
 ---
 
@@ -31,7 +35,8 @@ conveniences that keep it out of your way.
   sentence before and after it sit faded above and below, so you always have
   context without being overwhelmed.
 - **Sensible sentence sizing.** Long paragraphs are broken into short, speakable
-  lines, and very short lines are grouped together — so each unit is a
+  lines at natural pauses — periods, commas, colons, and other punctuation — and
+  any lines that come out too short are stacked back together, so each unit is a
   comfortable mouthful, never a single character or a runaway paragraph.
 - **Simplified or Traditional — your choice.** Reading a Simplified book but more
   comfortable with Traditional characters (or the other way round)? Flip the whole
@@ -80,14 +85,19 @@ conveniences that keep it out of your way.
 ## What it looks like
 
 **Reading and listening** — the current sentence is large with pinyin above every
-character; neighbouring sentences sit faded for context:
+character; neighbouring lines sit faded above and below, like scrolling lyrics.
+The round green button plays, and every button shows its keyboard shortcut:
 
-![Reading view: a large centred sentence with pinyin above each character, and faded context sentences above and below.](docs/reader-read.png)
+![Reading view: a large centred sentence with pinyin above each character, faded context lines above and below, and a media-player transport bar with keyboard hints on each button.](docs/reader-read.png)
 
 **After you speak** — each character is marked green / amber / red, with your score
-in the corner:
+on the transport bar:
 
-![Graded view: the same sentence with characters coloured green, amber and red, and a 90% score shown.](docs/reader.png)
+![Graded view: the same sentence with characters coloured green, amber and red, and a 92% score shown.](docs/reader.png)
+
+Prefer a lighter look? A one-tap toggle switches the whole app to a light theme:
+
+![The same player in its light theme.](docs/reader-v2-light.png)
 
 ## Getting started
 
@@ -102,11 +112,14 @@ Then, in a terminal, from this folder:
 # 1. Install the pieces it needs (one time)
 pip install -r requirements.txt
 
-# 2. Start the app
+# 2. Start the app — the modern player
+python3 mandarin_learner_gui_v2.py
+
+# …or the classic reader, if you prefer
 python3 mandarin_learner_gui.py
 ```
 
-A window opens. Click **Open EPUB…**, pick a Chinese e-book, and you're reading.
+A window opens. Click **Open**, pick a Chinese e-book, and you're reading.
 
 **Two things to expect the first time:**
 
@@ -153,9 +166,10 @@ The app is split cleanly into three files, so all the logic lives in one place:
 
 | File | What it is |
 |---|---|
-| `mandarin_learner_gui.py` | The windowed app — chapter list, reader, and microphone grading |
+| `mandarin_learner_gui_v2.py` | The **modern player** interface (recommended) — karaoke stage + media-player transport bar |
+| `mandarin_learner_gui.py` | The **classic** windowed interface — same features, simpler layout |
 | `mandarin_learner.py` | A command-line version, handy for testing |
-| `mandarin_learner_engine.py` | The engine: reading EPUBs, sentence splitting, pinyin, voices, speech recognition, and grading — no interface, just logic |
+| `mandarin_learner_engine.py` | The engine: reading EPUBs, sentence splitting, pinyin, voices, speech recognition, and grading — no interface, just logic (shared by both) |
 
 The command-line tool lets you inspect the engine without opening the window:
 

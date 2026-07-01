@@ -128,8 +128,10 @@ JUNK_PATTERNS = [
     "索引", "关于作者", "關於作者", "版权页", "版權頁",
 ]
 
-# CJK sentence terminators / pausers to split on (spec 5.2).
-CJK_TERMINATORS = "。！？；…、—"
+# CJK sentence terminators / pausers to split on. Strong stops (。！？；…、—) plus
+# commas and colons (，,：:) so long comma-spliced sentences break into short,
+# speakable phrases; the packing step re-stacks any that end up too short.
+CJK_TERMINATORS = "。！？；…、—，,：:"
 
 
 # ── Text extraction (reused from the audiobook engine) ────────────────────────
