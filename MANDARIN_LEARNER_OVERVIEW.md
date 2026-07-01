@@ -13,6 +13,63 @@
 
 ---
 
+## ✅ Build status & handoff (updated 2026-07-01)
+
+**Status: built, tested, and published.** Everything in the CORE spec below is
+implemented and working; a few pieces were extended beyond the original spec
+(see "Deviations"). This section is the current-state summary — the rest of the
+document is the original design spec, kept for rationale.
+
+**Where it lives**
+- GitHub (public): https://github.com/lyhjeremy/mandarin-learning-reader
+- Showcase (GitHub Pages): https://lyhjeremy.github.io/mandarin-learning-reader/
+- The project folder itself is the git repo (branch `main`).
+
+**What was built**
+- `mandarin_learner_engine.py` — the engine; all CORE subsystems (§5.1–5.9), no UI.
+- `mandarin_learner.py` — CLI / test harness (`--list --detect --chunks --pinyin
+  --synth --grade --transcribe`).
+- `mandarin_learner_gui.py` — **classic** Tkinter GUI (this spec's original layout).
+- `mandarin_learner_gui_v2.py` — **modern** GUI (Spotify/Audible/karaoke look): a big
+  centred karaoke stage, custom rounded transport buttons with the **keyboard key
+  printed on each**, a circular Play, a progress scrubber + live score, dark by
+  default with a light toggle.
+- `README.md`, `index.html` (showcase), `requirements.txt`, `docs/` screenshots.
+
+**How to run**
+```bash
+pip install -r requirements.txt
+python3 mandarin_learner_gui_v2.py            # modern player (recommended)
+python3 mandarin_learner_gui.py               # classic
+python3 mandarin_learner.py book.epub --list  # CLI
+```
+Dependencies are installed in the local Python; the Whisper `small` model is already
+downloaded (first Record works offline). edge-tts needs internet per *new* sentence,
+then caches it.
+
+**Deviations / extensions from the spec below**
+- **Chunking also splits on commas & colons (，,：:)**, not just the strong stops in
+  §5.2 — long comma-spliced sentences become short, speakable phrases; the packing
+  step still re-stacks any that end up too short. (The spec originally excluded the
+  comma; changed at the builder's request.)
+- **Grading normalises script (§5.8):** faster-whisper often transcribes Mandarin as
+  Traditional characters even for a Simplified book, so `grade()` compares both sides
+  in a common script (学 == 學) while still displaying the original characters.
+  Without this, correctly-read Simplified sentences scored ~70%.
+- **Sound/pinyin tolerance (§5.8 OPTIONAL) is implemented** as a "Lenient" toggle
+  (amber = right sound, wrong character), and **auto-advance is a UI toggle**.
+- STT backend is **faster-whisper `small`** (openai-whisper wired as an automatic
+  fallback); OpenCC via `opencc-python-reimplemented`.
+
+**Notable fix:** the chapter list (a Tk Listbox) hijacked Space/Enter ("select
+active row"), which snapped playback back to the chapter's first sentence — fixed in
+**both** GUIs (guard re-selection + bind Space/Enter to Play on the listbox).
+
+**Vs. the contingency tree (§9):** all CORE built at the full "aim-high" level; no
+fallbacks were needed. The fallbacks remain available behind their seams.
+
+---
+
 ## 0. How to read this document
 
 This spec is organized so you can build **aggressively (aim high)** but always
