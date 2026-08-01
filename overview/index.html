@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mandarin Learning Reader — it listens to you read, and marks every character</title>
+<meta name="description" content="Turns any Chinese e-book into a patient Mandarin tutor. Pinyin above every character, natural speech, and character-by-character pronunciation scoring that runs entirely on your own machine." />
+<meta name="theme-color" content="#FBF8F1" />
+<meta property="og:title" content="Mandarin Learning Reader" />
+<meta property="og:description" content="Read a real book one sentence at a time, say it back, and get every character marked green, amber or red. Free, offline, private." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lyhjeremy.github.io/mandarin-learning-reader/overview/" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #FBF8F1;
+    --card: #FFFFFF;
+    --plate: #FFFFFF;
+    --ink: #1a1a2e;
+    --ink2: #3d3d55;
+    --muted: #6B7280;
+    --rule: #E5DCC7;
+    --accent: #BE123C;
+    --accent2: #B45309;
+    --link: #0E7490;
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: 'Source Sans 3', -apple-system, system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+    --shadow: 0 1px 2px rgba(26,26,46,.05), 0 10px 34px rgba(26,26,46,.07);
+    --spine:  92px;
+    --col:    min(100% - 2.6rem, 62rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14141f;
+      --card: #1c1c2a;
+      --plate: #f7f4ec;
+      --ink: #F2EFE6;
+      --ink2: #C9C4B6;
+      --muted: #918B7D;
+      --rule: #33313f;
+      --accent: #FB7185;
+      --accent2: #E3BC5E;
+      --link: #22D3EE;
+      --shadow: 0 1px 2px rgba(0,0,0,.32), 0 10px 34px rgba(0,0,0,.4);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--serif); font-size: clamp(17px, 0.55rem + 0.6vw, 19.5px);
+    line-height: 1.68; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: var(--link); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  strong { font-weight: 700; color: var(--ink); }
+  code { font-family: var(--mono); font-size: .86em;
+         background: color-mix(in srgb, var(--ink) 7%, transparent);
+         padding: .12em .38em; border-radius: 4px; }
+  .wrap { width: var(--col); margin: 0 auto; }
+
+  .eyebrow { font-family: var(--mono); font-weight: 600; font-size: 11.5px;
+             letter-spacing: .17em; text-transform: uppercase; color: var(--muted);
+             margin: 0 0 14px; }
+
+  .masthead { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding: 30px 0 0; }
+  .logo { font-family: var(--sans); font-weight: 800; font-size: 21px;
+          letter-spacing: -.02em; display: flex; align-items: center; gap: 9px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex: none; }
+  .tagline { font-size: 15px; color: var(--ink2); font-family: var(--sans); }
+
+  .hero { padding: 44px 0 54px; }
+  .kicker { font-family: var(--sans); font-size: clamp(18px, 2.1vw, 23px); font-weight: 600;
+            color: var(--muted); margin: 0 0 8px; letter-spacing: -.01em; }
+  .hero h1 { font-family: var(--sans); font-size: clamp(37px, 6vw, 72px); font-weight: 800;
+             letter-spacing: -.035em; line-height: 1.04; margin: 0; max-width: 17ch; }
+  .hero-sub { margin: 24px 0 0; font-size: 1.06em; color: var(--ink2); max-width: 60ch; }
+
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; align-items: center; }
+  .btn { display: inline-block; padding: 13px 26px; border-radius: 8px;
+         font-family: var(--sans); font-weight: 700; font-size: 16px;
+         text-decoration: none; border: 1px solid var(--ink); transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--ink); color: var(--paper); }
+  .textlink { font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--ink2);
+              text-decoration: underline; text-underline-offset: 4px;
+              text-decoration-thickness: 1px; }
+  .textlink:hover { color: var(--ink); }
+
+  .claims { display: grid; grid-template-columns: 1fr; gap: 0 52px; margin: 50px 0 0; }
+  @media (min-width: 760px) { .claims { grid-template-columns: 1fr 1fr; } }
+  .claim { padding: 18px 0 20px; border-top: 1px solid var(--rule); }
+  .claim:first-child, .claim:nth-child(2) { border-top: 2px solid var(--ink); }
+  @media (max-width: 759px) { .claim:nth-child(2) { border-top: 1px solid var(--rule); } }
+  .claim .n { font-family: var(--sans); font-weight: 800; font-size: 40px; line-height: 1.05;
+              color: var(--accent); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .claim h3 { margin: 0 0 6px; }
+  .claim p { margin: 9px 0 0; font-size: 15.5px; color: var(--ink2); line-height: 1.5;
+             font-family: var(--sans); }
+
+  .route { position: relative; padding-bottom: 30px; }
+  .route::before { content: ""; position: absolute; left: calc(var(--spine) / 2); top: 8px;
+                   bottom: 80px; width: 2px; background: var(--rule); }
+  .stop { position: relative; padding: 0 0 76px var(--spine); }
+  .stop::before { content: ""; position: absolute; left: calc(var(--spine) / 2 - 7px); top: 7px;
+                  width: 16px; height: 16px; border-radius: 50%;
+                  background: var(--paper); border: 2px solid var(--ink); box-sizing: border-box; }
+  .stop--key::before { background: var(--accent); border-color: var(--accent); }
+  .stop--warn::before { background: var(--accent2); border-color: var(--accent2); }
+  .stop--end::before { background: var(--ink); }
+
+  h2 { font-family: var(--sans); font-size: clamp(27px, 3.7vw, 38px); font-weight: 800;
+       letter-spacing: -.027em; line-height: 1.13; margin: 12px 0 16px; max-width: 19ch; }
+  h3 { font-family: var(--sans); font-size: 17px; font-weight: 700; margin: 0 0 7px;
+       letter-spacing: -.012em; }
+  .stop p { margin: 0 0 17px; max-width: 60ch; color: var(--ink2); }
+
+  .bignum { font-family: var(--sans); font-weight: 800; font-size: clamp(74px, 10vw, 128px);
+            line-height: .86; letter-spacing: -.05em; margin: 6px 0 4px; color: var(--accent);
+            font-variant-numeric: tabular-nums; }
+  .bignum-note { font-family: var(--sans); font-size: 16px; color: var(--muted); margin: 0 0 20px; }
+
+  /* A white-background chart would glow in dark mode; the plate makes it read
+     as a deliberately printed page instead. */
+  figure { margin: 28px 0 0; }
+  .plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px;
+           padding: 14px; box-shadow: var(--shadow); overflow: hidden; }
+  .plate img { border-radius: 4px; }
+  .plate--flush { padding: 0; }
+  .shot { border-radius: 10px; border: 1px solid var(--rule); box-shadow: var(--shadow);
+          overflow: hidden; background: var(--card); }
+  /* min() so the cap never exceeds the column on a phone */
+  .shot--narrow { max-width: min(430px, 100%); }
+  figcaption { margin-top: 11px; font-family: var(--sans); font-size: 14.5px;
+               color: var(--muted); line-height: 1.5; }
+  .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+            gap: 22px; margin-top: 28px; }
+  .panels figure { margin: 0; }
+
+  .pull { margin: 30px 0 0; padding: 20px 25px; border-left: 3px solid var(--accent);
+          background: color-mix(in srgb, var(--accent) 7%, transparent);
+          border-radius: 0 8px 8px 0; }
+  .pull p { margin: 0 0 9px; color: var(--ink); max-width: none; }
+  .pull p:last-of-type { margin: 0; }
+  .pull .who { font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
+               text-transform: uppercase; color: var(--muted); display: block; margin-top: 9px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+          gap: 1px; margin-top: 28px; background: var(--rule);
+          border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .cell { background: var(--paper); padding: 22px 20px; }
+  .cell p { font-size: 15px; margin: 0; color: var(--ink2); max-width: none;
+            line-height: 1.55; font-family: var(--sans); }
+
+  /* results tables: scroll inside their own box, never the page */
+  .tablewrap { margin-top: 26px; overflow-x: auto; border: 1px solid var(--rule);
+               border-radius: 10px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; min-width: 480px;
+          font-family: var(--sans); font-size: 15.5px; }
+  th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--rule); }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+       text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  td { color: var(--ink2); font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  .win td { color: var(--ink); font-weight: 700;
+            background: color-mix(in srgb, var(--accent) 8%, transparent); }
+
+  /* real terminal output, quoted verbatim */
+  .term { margin-top: 26px; background: #14141f; color: #e6e3da; border-radius: 10px;
+          padding: 18px 20px; overflow-x: auto; box-shadow: var(--shadow);
+          border: 1px solid #2a2a3a; }
+  .term pre { margin: 0; font-family: var(--mono); font-size: 13px; line-height: 1.62;
+              white-space: pre; }
+  .term .c { color: #9aa08f; }
+  .term .g { color: #7fd18f; }
+  .term .y { color: #E3BC5E; }
+
+  .specs { margin-top: 26px; border-top: 1px solid var(--rule); }
+  .spec { display: grid; grid-template-columns: 1fr; gap: 2px;
+          padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  @media (min-width: 700px) { .spec { grid-template-columns: 178px 1fr; gap: 24px; } }
+  .spec dt { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em;
+             text-transform: uppercase; color: var(--muted); padding-top: 4px; }
+  .spec dd { margin: 0; font-size: 16px; color: var(--ink2); font-family: var(--sans); }
+
+  .close { padding: 6px 0 80px var(--spine); position: relative; }
+  .close h2 { max-width: 20ch; }
+  footer { border-top: 1px solid var(--rule); padding: 28px 0 60px;
+           font-family: var(--sans); font-size: 14.5px; color: var(--muted); }
+  footer a { color: var(--ink2); }
+  footer p { margin: 0 0 8px; }
+
+  @media (max-width: 640px) {
+    :root { --spine: 38px; }
+    .hero { padding: 36px 0 46px; }
+    .stop { padding-bottom: 58px; }
+    .plate { padding: 9px; }
+    .term { padding: 14px 14px; }
+    .term pre { font-size: 11.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn { transition: none; }
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="logo"><span class="dot" aria-hidden="true"></span>Mandarin Learning Reader</div>
+    <div class="tagline">read it, hear it, say it, get marked</div>
+  </header>
+
+  <section class="hero">
+    <p class="kicker">Flashcards teach you words. Books teach you Chinese.</p>
+    <h1>This one listens while you read it out loud.</h1>
+
+    <p class="hero-sub">
+      Point it at any Chinese e-book and it becomes a patient tutor. One sentence at
+      a time, large and centred, with <strong>pinyin printed above every
+      character</strong>. It reads the line aloud in a natural voice, then
+      <strong>listens to you say it back</strong> and colours every character green,
+      amber or red. Score 90% and it moves you on by itself. All of it runs on your
+      own computer, for free, and your voice never leaves the machine.
+    </p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/lyhjeremy/mandarin-learning-reader">Get the app</a>
+      <a class="textlink" href="../">or the quick tour</a>
+    </div>
+
+    <figure style="margin-top:38px">
+      <img width="2480" height="1700" class="shot" src="../docs/reader.png" fetchpriority="high"
+        alt="The modern player after a spoken attempt: a large karaoke-style sentence with pinyin above every character, each character marked green for correct, amber for right sound wrong character, or red for missed, with an accuracy score on the transport bar." />
+      <figcaption>
+        After you've spoken. Green is correct, amber is the right sound on the
+        wrong character, red is missed — and the score decides whether it advances.
+      </figcaption>
+    </figure>
+
+    <div class="claims">
+      <div class="claim">
+        <div class="n">3 colours</div>
+        <p>per character, not one score for the sentence. You find out
+           <em>which</em> character you missed.</p>
+      </div>
+      <div class="claim">
+        <div class="n">90%</div>
+        <p>and it advances on its own, so a good run flows without touching the
+           mouse.</p>
+      </div>
+      <div class="claim">
+        <div class="n">5 speeds</div>
+        <p>from 0.5× while a phrase is new up to 1.5× once it clicks.</p>
+      </div>
+      <div class="claim">
+        <div class="n">Private</div>
+        <p>Speech recognition runs locally. No account, no subscription, no audio
+           upload.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+<div class="route">
+
+  <section class="stop">
+    <p class="eyebrow">Start · the gap it fills</p>
+    <h2>Reading practice that can hear you</h2>
+    <p>
+      Most Chinese reading tools show you the text and, at best, read it to you.
+      The half that is missing is the half that matters for speaking: nobody checks
+      whether what came out of your mouth was right.
+    </p>
+    <p>
+      A tutor does that, and a tutor is expensive and only available on Tuesdays.
+      This does the narrow, mechanical part of the job — did you say the characters
+      on the screen — for free, on demand, at whatever hour you happen to be reading.
+    </p>
+  </section>
+
+  <section class="stop stop--key">
+    <p class="eyebrow">↓ the loop</p>
+    <h2>Read, listen, speak, get corrected</h2>
+    <div class="grid">
+      <div class="cell">
+        <h3>Pinyin above every character</h3>
+        <p>Tone-marked, sitting directly above the character, so you never break
+           the sentence to look something up.</p>
+      </div>
+      <div class="cell">
+        <h3>One sentence at a time</h3>
+        <p>The current line is large and centred; neighbours sit faded above and
+           below, like scrolling lyrics.</p>
+      </div>
+      <div class="cell">
+        <h3>Sensible sentence sizing</h3>
+        <p>Long paragraphs split at natural pauses, and lines that come out too
+           short get stacked back together. Each unit is a comfortable mouthful.</p>
+      </div>
+      <div class="cell">
+        <h3>Simplified or Traditional</h3>
+        <p>Flip the whole text either way from a menu, any time, whichever the
+           book was written in.</p>
+      </div>
+      <div class="cell">
+        <h3>Natural voices, four ways</h3>
+        <p>Male or female, Mainland or Taiwan accent. Once a line has been read,
+           replaying it is instant.</p>
+      </div>
+      <div class="cell">
+        <h3>A gentler mode</h3>
+        <p>Lenient grading counts near-misses that <em>sound</em> right, so
+           homophones stop feeling like a punishment.</p>
+      </div>
+    </div>
+    <figure>
+      <img width="2480" height="1700" class="shot" src="../docs/reader-read.png" loading="lazy"
+        alt="The reading and listening view: the current sentence large with pinyin above each character, the previous and next sentences faded above and below, and a round green play button with keyboard shortcuts shown on every control." />
+      <figcaption>Before you speak. Every button shows its keyboard shortcut.</figcaption>
+    </figure>
+  </section>
+
+  <section class="stop">
+    <p class="eyebrow">↓ the marking</p>
+    <h2>Amber is the interesting colour</h2>
+    <p>
+      Green and red are obvious. <strong>Amber</strong> — right sound, wrong
+      character — is the one that teaches you something, because it separates
+      <em>"you can't pronounce this"</em> from <em>"you pronounced a different word
+      that sounds identical."</em> Those are completely different problems and most
+      tools score them the same.
+    </p>
+    <p>
+      That distinction is also why Lenient mode exists. Mandarin has an enormous
+      number of homophones, and a learner who says the right syllable with the right
+      tone has done the thing being practised, even when the recogniser picks a
+      different character.
+    </p>
+  </section>
+
+  <section class="stop">
+    <p class="eyebrow">↓ staying out of the way</p>
+    <h2>It remembers where you were</h2>
+    <p>
+      Close it and reopen it and you are back on the same book, chapter and
+      sentence, with your voice, speed and settings intact. Chapters are listed down
+      the side, with cover, copyright and contents pages flagged so you can skip to
+      the actual reading.
+    </p>
+    <p>
+      There are two interfaces doing the same job: a modern media-player layout
+      that behaves like a cross between a music app and a karaoke machine, and a
+      classic reader. Both have light and dark themes and a full set of keyboard
+      shortcuts, so the whole loop works without reaching for the mouse.
+    </p>
+  </section>
+
+  <section class="stop stop--warn">
+    <p class="eyebrow">↓ what it can't do</p>
+    <h2>It checks characters, not tones directly</h2>
+    <p>
+      The scoring works by comparing what the speech recogniser heard against the
+      characters on screen. That is a good proxy for pronunciation and it is not the
+      same thing as tone assessment — a recogniser can be forgiving in ways a native
+      listener would not be, and it can also mishear you when you were right.
+    </p>
+    <p>
+      It needs the internet the first time a sentence is spoken, to fetch that
+      line's audio. Everything afterwards, including the speech checking, runs on
+      your machine. And you supply your own books: the repository ships code only,
+      no copyrighted text.
+    </p>
+  </section>
+
+  <section class="stop stop--end">
+    <p class="eyebrow">Finish · what it is built on</p>
+    <h2>Runs on your machine, costs nothing</h2>
+    <dl class="specs">
+      <div class="spec"><dt>Speech</dt><dd>Neural Mandarin voices, male or female, Mainland or Taiwan</dd></div>
+      <div class="spec"><dt>Recognition</dt><dd>Runs locally. Microphone audio is never uploaded</dd></div>
+      <div class="spec"><dt>Scoring</dt><dd>Per character: correct, right-sound, or missed, plus an overall accuracy score</dd></div>
+      <div class="spec"><dt>Auto-advance</dt><dd>At 90% or higher, switchable off</dd></div>
+      <div class="spec"><dt>Interfaces</dt><dd>A modern player and a classic reader, both light and dark</dd></div>
+      <div class="spec"><dt>Books</dt><dd>You supply your own. Code only in the repository</dd></div>
+      <div class="spec"><dt>Sibling</dt><dd><a href="https://lyhjeremy.github.io/cantonese-learner-v2/">Cantonese Learner V2</a>, the same loop applied to daily Hong Kong news and conversations</dd></div>
+    </dl>
+  </section>
+
+</div>
+</div>
+
+<div class="wrap">
+  <section class="close">
+    <h2>Learn from a book you actually want to read</h2>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/lyhjeremy/mandarin-learning-reader">Get the app</a>
+      <a class="textlink" href="../">or the quick tour</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Mandarin Learning Reader ·
+      <a href="../">Showcase</a> ·
+      <a href="https://github.com/lyhjeremy/mandarin-learning-reader">Source</a> ·
+      MIT © 2026 Jeremy Lee
+    </p>
+  </footer>
+</div>
+</body>
+</html>

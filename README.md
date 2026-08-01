@@ -16,6 +16,7 @@ feels like a cross between Spotify, Audible, and a karaoke machine, and a
 
 > 🌐 **Prefer a quick, non-technical tour?** See the showcase page →
 > https://lyhjeremy.github.io/mandarin-learning-reader/
+> 📖 **Product overview:** https://lyhjeremy.github.io/mandarin-learning-reader/overview/
 
 ![The modern player after you've spoken a sentence: the big karaoke line with pinyin above every character, each character marked green (right), amber (right sound), or red (missed), and your score on the transport bar.](docs/reader.png)
 
