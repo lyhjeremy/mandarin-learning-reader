@@ -1,4 +1,4 @@
-# Mandarin Learning Reader — Full Project Overview
+# Mandarin Learning Reader: Full Project Overview
 
 > A hand-off / spec document for building a **Chinese EPUB → interactive Mandarin
 > learning tool**. It reuses the proven architecture of the EPUB→Audiobook
@@ -13,11 +13,11 @@
 
 ---
 
-## ✅ Build status & handoff (updated 2026-07-01)
+## Build status & handoff (updated 2026-07-01)
 
 **Status: built, tested, and published.** Everything in the CORE spec below is
 implemented and working; a few pieces were extended beyond the original spec
-(see "Deviations"). This section is the current-state summary — the rest of the
+(see "Deviations"). This section is the current-state summary. The rest of the
 document is the original design spec, kept for rationale.
 
 **Where it lives**
@@ -26,11 +26,11 @@ document is the original design spec, kept for rationale.
 - The project folder itself is the git repo (branch `main`).
 
 **What was built**
-- `mandarin_learner_engine.py` — the engine; all CORE subsystems (§5.1–5.9), no UI.
-- `mandarin_learner.py` — CLI / test harness (`--list --detect --chunks --pinyin
+- `mandarin_learner_engine.py`. The engine; all CORE subsystems (§5.1–5.9), no UI.
+- `mandarin_learner.py`, CLI / test harness (`--list --detect --chunks --pinyin
   --synth --grade --transcribe`).
-- `mandarin_learner_gui.py` — **classic** Tkinter GUI (this spec's original layout).
-- `mandarin_learner_gui_v2.py` — **modern** GUI (Spotify/Audible/karaoke look): a big
+- `mandarin_learner_gui.py`, **classic** Tkinter GUI (this spec's original layout).
+- `mandarin_learner_gui_v2.py`, **modern** GUI (Spotify/Audible/karaoke look): a big
   centred karaoke stage, custom rounded transport buttons with the **keyboard key
   printed on each**, a circular Play, a progress scrubber + live score, dark by
   default with a light toggle.
@@ -49,7 +49,7 @@ then caches it.
 
 **Deviations / extensions from the spec below**
 - **Chunking also splits on commas & colons (，,：:)**, not just the strong stops in
-  §5.2 — long comma-spliced sentences become short, speakable phrases; the packing
+  §5.2: long comma-spliced sentences become short, speakable phrases; the packing
   step still re-stacks any that end up too short. (The spec originally excluded the
   comma; changed at the builder's request.)
 - **Grading normalises script (§5.8):** faster-whisper often transcribes Mandarin as
@@ -62,7 +62,7 @@ then caches it.
   fallback); OpenCC via `opencc-python-reimplemented`.
 
 **Notable fix:** the chapter list (a Tk Listbox) hijacked Space/Enter ("select
-active row"), which snapped playback back to the chapter's first sentence — fixed in
+active row"), which snapped playback back to the chapter's first sentence, fixed in
 **both** GUIs (guard re-selection + bind Space/Enter to Play on the listbox).
 
 **Vs. the contingency tree (§9):** all CORE built at the full "aim-high" level; no
@@ -75,9 +75,9 @@ fallbacks were needed. The fallbacks remain available behind their seams.
 This spec is organized so you can build **aggressively (aim high)** but always
 have a safe path back. Every subsystem is tagged:
 
-- **[CORE]** — must exist for the app to be useful. Build these first.
-- **[OPTIONAL]** — enhances the experience; can ship later.
-- **[FALLBACK]** — the simpler version to drop back to if a [CORE] item proves
+- **[CORE].** Must exist for the app to be useful. Build these first.
+- **[OPTIONAL].** Enhances the experience; can ship later.
+- **[FALLBACK].** The simpler version to drop back to if a [CORE] item proves
   too hard, too slow, or too flaky.
 
 The intended build order is **aim high on day one** (full speech-recognition
@@ -114,19 +114,19 @@ It ships as a **Tkinter GUI** and a **CLI**, both sharing one non-UI **engine**.
 This project is a sibling of the EPUB→Audiobook app. **Reuse these wholesale**
 (they are mature and format-agnostic):
 
-- **EPUB parsing & text extraction** — `load_book()`, `extract_text()` (BeautifulSoup
+- **EPUB parsing & text extraction.** `load_book()`, `extract_text()` (BeautifulSoup
   cleanup, NFKC normalize, junk stripping), `first_heading()`.
-- **Chapter detection & junk flagging** — `gather_chapters()`, spine-in-reading-order
+- **Chapter detection & junk flagging.** `gather_chapters()`, spine-in-reading-order
   walk, TOC title resolution, `JUNK_PATTERNS` (incl. Chinese 目录/版权/封面…).
-- **CJK language logic** — `cjk_fraction()`, `is_cjk_text()`, CJK-aware sentence
+- **CJK language logic.** `cjk_fraction()`, `is_cjk_text()`, CJK-aware sentence
   terminators, character counting.
-- **edge-tts synthesis contract** — the **retry + atomic `.part`→rename + skip-existing**
+- **edge-tts synthesis contract.** The **retry + atomic `.part`→rename + skip-existing**
   reliability pattern. Copy this wholesale for audio caching.
-- **The 3-layer split** — engine / CLI / GUI, so front-ends never duplicate logic.
-- **The Tkinter thread + `queue` + `after()` poll loop** — the correct concurrency
+- **The 3-layer split.** Engine / CLI / GUI, so front-ends never duplicate logic.
+- **The Tkinter thread + `queue` + `after()` poll loop.** The correct concurrency
   pattern; all blocking work (synthesis, Whisper, book loading) runs on daemon
   threads that push messages to a queue drained on the main thread.
-- **Settings/progress JSON dotfile in `$HOME`** — same persistence idea.
+- **Settings/progress JSON dotfile in `$HOME`.** Same persistence idea.
 
 **What's NEW in this project (does not exist in the audiobook app):**
 
@@ -139,7 +139,7 @@ This project is a sibling of the EPUB→Audiobook app. **Reuse these wholesale**
 
 ---
 
-## 3. Architecture — the 3-layer split (keep this pattern)
+## 3. Architecture: the 3-layer split (keep this pattern)
 
 ```
 ┌──────────────────────────────┐     ┌──────────────────────────┐
@@ -160,11 +160,11 @@ This project is a sibling of the EPUB→Audiobook app. **Reuse these wholesale**
             └──────────────────────────────────────────┘
 ```
 
-- **`mandarin_learner_engine.py`** — no UI imports, safe to import anywhere. All
+- **`mandarin_learner_engine.py`.** No UI imports, safe to import anywhere. All
   real work. Target ~600–800 lines.
-- **`mandarin_learner_gui.py`** — Tkinter GUI: chapter list + reader + controls +
+- **`mandarin_learner_gui.py`.** Tkinter GUI: chapter list + reader + controls +
   mic feedback. Target ~1000–1300 lines.
-- **`mandarin_learner.py`** — CLI front-end for headless use / testing (list
+- **`mandarin_learner.py`.** CLI front-end for headless use / testing (list
   chapters, dump chunked sentences, batch-synthesize audio, etc.).
 
 **Why keep the split:** the CLI is invaluable for testing the engine (chunking,
@@ -198,7 +198,7 @@ Controls, minimal and functional: **Play**, **Record**, **Replay/Repeat**,
 
 ## 5. Core subsystems (build order + reuse notes)
 
-### 5.1 [CORE] EPUB parsing & text extraction — *reuse from audiobook app*
+### 5.1 [CORE] EPUB parsing & text extraction: *reuse from audiobook app*
 - `load_book(path) -> (book, title, author)` via **ebooklib** (`epub.read_epub`).
 - `extract_text(html_bytes)` via **BeautifulSoup**: drop non-speakable tags,
   preserve paragraph breaks, `get_text()`, NFKC-normalize, strip soft hyphens /
@@ -207,18 +207,18 @@ Controls, minimal and functional: **Play**, **Record**, **Replay/Repeat**,
   spine in reading order, TOC-title → first heading → "Section N".
 - **Nothing here changes.** This is format-agnostic and already CJK-safe.
 
-### 5.2 [CORE] CJK sentence chunking with smart packing — *new logic, adapt splitter*
+### 5.2 [CORE] CJK sentence chunking with smart packing: *new logic, adapt splitter*
 The single most important **new** engine function. Rules agreed with the builder:
 
 - **Respect punctuation first.** Split on sensible Chinese stops/pausers:
-  `。 ！ ？ ； … 、` and the em-dash `—`. (Full stops, question/exclamation
+  `。 ！ ？ ； … 、` and the em-dash `—`. (Full stops, question/exclamation <!-- ledger-allow: emdash (documents a parser terminator) -->
   marks, semicolons, ellipses, enumeration comma, dash. Use common sense: these
   are natural "stop or pause" points.)
 - **No hard upper cap.** If a single sentence is 18–20+ characters, keep it whole.
 - **Pack short neighbors.** If a sentence is very short (≈ ≤ 5 characters) and the
   next one is also short, **merge them** so units aren't awkwardly tiny. Aim for a
   comfortable **~7–15 characters** per displayed unit, but never split a real
-  sentence to hit that — packing only ever *joins*, never *cuts*.
+  sentence to hit that, packing only ever *joins*, never *cuts*.
 - **Count by characters**, not words (CJK). Whitespace/punctuation don't count
   toward the "length" for packing decisions but stay in the displayed text.
 
@@ -228,7 +228,7 @@ def chunk_text_for_learning(text, target_min=7, target_max=15):
     Split Chinese text into learning units.
 
     Strategy:
-      1. Split into raw sentences at CJK terminators (。！？；…、—).
+      1. Split into raw sentences at CJK terminators (。！？；…、—). <!-- ledger-allow: emdash -->
       2. Walk sentences left-to-right, packing SHORT ones together:
          - if current unit's char_count < target_min, append next sentence
          - stop packing once >= target_min (or once appending would create an
@@ -248,8 +248,8 @@ def chunk_text_for_learning(text, target_min=7, target_max=15):
 - **CLI test hook:** `mandarin_learner.py --chunks book.epub --chapter 3` should
   print the chunked units so packing behavior is easy to eyeball.
 
-### 5.3 [CORE] Pinyin annotation (per character) — *new*
-- Use **`pypinyin`** (recommended, tone-mark support, better coverage) — or
+### 5.3 [CORE] Pinyin annotation (per character): *new*
+- Use **`pypinyin`** (recommended, tone-mark support, better coverage), or
   `xpinyin` as an alternative.
 - Produce, for each character, its tone-marked pinyin. Skip whitespace and
   punctuation (they have no pinyin).
@@ -277,7 +277,7 @@ def annotate(text):
     return out
 ```
 
-- **Rendering:** each character is a small vertical stack — pinyin on top (or
+- **Rendering:** each character is a small vertical stack, pinyin on top (or
   bottom), the big character below (or above). Lay them out left-to-right,
   wrapping as needed.
 - **[OPTIONAL] Heteronyms (多音字):** pypinyin can't always pick the right reading
@@ -307,14 +307,14 @@ def convert_script(text, mode):   # mode in {"none", "s2t", "t2s"}
   toggle** and display the EPUB's original script as-is. Everything else still
   works. Keep the toggle behind a settings flag so it's a one-line disable.
 
-### 5.5 [CORE] edge-tts Mandarin synthesis — *reuse retry/atomic/cache*
+### 5.5 [CORE] edge-tts Mandarin synthesis: *reuse retry/atomic/cache*
 - Voices (offer **both**, user-selectable):
-  - Female: `zh-CN-XiaoxiaoNeural` (very natural) — good default.
+  - Female: `zh-CN-XiaoxiaoNeural` (very natural), good default.
   - Male: `zh-CN-YunxiNeural` (natural male).
   - (Alternatives to expose if desired: `zh-CN-XiaoyiNeural`, `zh-CN-YunyangNeural`.)
 - **Speed tiers (exactly five):** 0.5×, 0.75×, 1.0×, 1.25×, 1.5×. Map to edge-tts
   `rate` strings (e.g. `-50%`, `-25%`, `+0%`, `+25%`, `+50%`). This uses edge-tts's
-  own rate — **no ffmpeg needed** for speed, which keeps dependencies light.
+  own rate. **No ffmpeg needed** for speed, which keeps dependencies light.
 - **Synthesize per-sentence**, on demand, and **cache** by a key of
   `hash(text|voice|rate)` to a cache dir so replays are instant and re-opening a
   chapter is cheap.
@@ -331,9 +331,9 @@ def synth_sentence(text, voice, speed) -> str:
 ```
 
 - **[FALLBACK]** If edge-tts rate at 0.5× sounds bad, add optional ffmpeg
-  `atempo` rendering (as the audiobook app does) — but only if needed.
+  `atempo` rendering (as the audiobook app does), but only if needed.
 
-### 5.6 [CORE] Microphone capture — *new*
+### 5.6 [CORE] Microphone capture: *new*
 - Use **`sounddevice`** to record, **`scipy.io.wavfile`** (or `soundfile`) to
   write a temp WAV that Whisper can read (16 kHz mono is ideal for Whisper).
 - Two capture modes to consider:
@@ -351,7 +351,7 @@ def record_wav(path, seconds=8):
     wav.write(path, SR, audio)
 ```
 
-### 5.7 [CORE] Local Whisper speech-to-text — *new, offline, no API*
+### 5.7 [CORE] Local Whisper speech-to-text: *new, offline, no API*
 - **Offline, no API key** (hard requirement). Two library choices:
   - **`faster-whisper`** (recommended): CTranslate2 backend, ~2–4× faster, lower
     RAM, easy CPU use. Model sizes: `tiny`, `base`, `small`, `medium`.
@@ -359,10 +359,10 @@ def record_wav(path, seconds=8):
 - **Recommended default:** `faster-whisper` **`small`** for a good accuracy/speed
   balance on Mandarin; drop to **`base`** or **`tiny`** if latency is bad.
 - **Load the model ONCE** at startup (or lazily on first use) and keep it in
-  memory — reloading per sentence is far too slow.
+  memory, reloading per sentence is far too slow.
 - Force `language="zh"` and, if using faster-whisper, consider
   `initial_prompt=<original sentence>` is **NOT** advisable (it can bias the
-  transcript toward "correct" and defeat grading) — transcribe **blind**.
+  transcript toward "correct" and defeat grading), transcribe **blind**.
 
 ```python
 from faster_whisper import WhisperModel
@@ -376,7 +376,7 @@ def transcribe(path):
 - **First-run note:** models download automatically (~40 MB tiny → ~460 MB small
   → ~1.5 GB medium). Tell the user this in the UI on first transcription.
 
-### 5.8 [CORE] Character-level pronunciation grading — *new, the "green/red" logic*
+### 5.8 [CORE] Character-level pronunciation grading: *new, the "green/red" logic*
 Agreed approach: **character-by-character** comparison of the original text vs.
 Whisper's transcript. But because Whisper may insert/delete characters, do a
 proper **alignment** rather than a naive `zip`, so a single missed character
@@ -422,19 +422,19 @@ def grade(original_text, heard_text):
 - **Green** = `ok True`, **Red** = `ok False`. Show `accuracy` as a percentage.
 - **≥ 90% → auto-advance** to the next sentence. Otherwise stay put; user may
   Replay, Record again, or press Next.
-- **[OPTIONAL — pinyin/phonetic tolerance]** Character-exact grading is strict:
+- **[OPTIONAL, pinyin/phonetic tolerance]** Character-exact grading is strict:
   homophones and near-misses get marked wrong even if the *sound* was right. If
   this feels too punishing, add a **pinyin-level fallback**: when characters
   differ, compare their **pinyin** (optionally tone-insensitive) and count a
   "sound match" as correct (perhaps a different color, e.g. amber = right sound,
   wrong character). Build the strict version first; add tolerance only if the
   strict version frustrates real use.
-- **[FALLBACK — no auto-advance]** If Whisper accuracy on the user's mic is too
+- **[FALLBACK, no auto-advance]** If Whisper accuracy on the user's mic is too
   low to trust the 90% gate, **decouple grading from advancing**: still show
   green/red as feedback, but always require a manual **Next**. This preserves the
   learning value even if the auto-advance heuristic is unreliable.
 
-### 5.9 [CORE] Progress persistence — *reuse dotfile idea*
+### 5.9 [CORE] Progress persistence: *reuse dotfile idea*
 - Save to `~/.mandarin_learner.json`. On launch, reopen the last book and jump to
   the saved chapter+sentence. Save on every advance and on clean exit.
 
@@ -463,26 +463,26 @@ def grade(original_text, heard_text):
 
 ---
 
-## 6. The GUI — structure & mechanics
+## 6. The GUI: structure & mechanics
 
 Single `App` class on a Tkinter root; `ttk` "clam" theme restyled. Reuse the
 audiobook app's proven patterns.
 
 - **Layout (minimal, functional):**
-  - **Chapter list** — sidebar (left) or top strip; junk chapters visually
+  - **Chapter list.** Sidebar (left) or top strip; junk chapters visually
     flagged; click to jump. Shows a check/position marker for progress.
   - **Reader area (center):**
-    - **Current sentence** — large, centered, each character stacked with its
+    - **Current sentence**, large, centered, each character stacked with its
       **pinyin**. After grading, characters are colored **green/red**.
-    - **Previous sentence** (above) and **next sentence(s)** (below) — smaller,
+    - **Previous sentence** (above) and **next sentence(s)** (below). Smaller,
       dimmer, for context.
-  - **Transport / controls** — **Play**, **Record**, **Replay**, **Next**,
+  - **Transport / controls**, **Play**, **Record**, **Replay**, **Next**,
     **Stop**; **voice** (male/female), **speed** (5 tiers), **Simplified/
     Traditional** toggle. Place sensibly; exact arrangement is free.
-  - **Progress bar** — position within chapter (and/or whole book).
-  - **Accuracy readout** — shows last attempt's % after grading.
-- **Threading model (reuse):** all blocking work — book load, TTS synth, mic
-  record, Whisper transcribe, script conversion — runs on **daemon threads** that
+  - **Progress bar.** Position within chapter (and/or whole book).
+  - **Accuracy readout.** Shows last attempt's % after grading.
+- **Threading model (reuse):** all blocking work: book load, TTS synth, mic
+  record, Whisper transcribe, script conversion. Runs on **daemon threads** that
   push messages onto a `queue.Queue`; a `root.after(100, self._poll)` loop drains
   it on the Tk main thread. **Never touch Tk from a worker thread.**
 - **Playback:** **`pygame.mixer.music`** to play the cached sentence MP3
@@ -500,16 +500,16 @@ audiobook app's proven patterns.
 
 ---
 
-## 7. The CLI — for testing & headless use
+## 7. The CLI: for testing & headless use
 
 `mandarin_learner.py` (argparse). Suggested flags:
 
-- `--list <book.epub>` — list chapters (with junk flags, char counts).
-- `--chunks <book.epub> --chapter N` — print chunked learning units (verify 5.2).
-- `--pinyin <book.epub> --chapter N` — print units with per-char pinyin.
-- `--synth <book.epub> --chapter N --voice ... --speed ...` — pre-cache audio.
-- `--convert {none,s2t,t2s}` — apply script conversion to output.
-- `--grade "<original>" "<heard>"` — test the grading function directly.
+- `--list <book.epub>`: list chapters (with junk flags, char counts).
+- `--chunks <book.epub> --chapter N`, print chunked learning units (verify 5.2).
+- `--pinyin <book.epub> --chapter N`, print units with per-char pinyin.
+- `--synth <book.epub> --chapter N --voice ... --speed ...`, pre-cache audio.
+- `--convert {none,s2t,t2s}`, apply script conversion to output.
+- `--grade "<original>" "<heard>"`, test the grading function directly.
 
 The CLI is the fastest way to validate chunking, pinyin, conversion, and grading
 without launching the GUI.
@@ -550,14 +550,14 @@ pip install opencc-python-reimplemented        # optional: script toggle
 ## 9. Contingency plans (the decision tree)
 
 Build the **aim-high** version first. If a specific piece fails, downgrade *only
-that piece* using the matching fallback — the rest of the app is unaffected
+that piece* using the matching fallback. The rest of the app is unaffected
 because of the clean engine seams.
 
 **A. Whisper too slow / too much RAM / laggy feedback**
 1. Switch `faster-whisper` model **small → base → tiny**.
 2. Ensure the model is **loaded once**, not per sentence.
 3. Reduce recording length; use `beam_size=1`, `compute_type="int8"`.
-4. **[FALLBACK]** If still unusable: ship **without live grading** — keep the
+4. **[FALLBACK]** If still unusable: ship **without live grading.** Keep the
    karaoke read-along (play, read pinyin, manual Next). Add a "Record & check"
    button that's clearly optional/experimental. This is the V-simple version and
    is still a genuinely useful Mandarin reader.
@@ -614,12 +614,12 @@ Section 9.
 
 ## 11. Notable design decisions to carry forward
 
-1. **Keep the engine / CLI / GUI split** — zero logic duplication; the CLI is
+1. **Keep the engine / CLI / GUI split.** Zero logic duplication; the CLI is
    your test harness for chunking, pinyin, and grading.
 2. **Atomic `.part`→rename + skip-existing cache** for all synthesized audio.
 3. **Load Whisper once; transcribe blind** (no `initial_prompt` from the answer).
 4. **Align, don't `zip`, when grading** so one missed character doesn't cascade.
-5. **Packing only joins, never cuts** — sentence integrity beats hitting a target
+5. **Packing only joins, never cuts.** Sentence integrity beats hitting a target
    length; there is no hard upper cap.
 6. **Convert the display text only**; run pinyin and grading on the *displayed*
    script so the user practices what they see.
