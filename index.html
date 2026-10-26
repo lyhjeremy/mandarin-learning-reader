@@ -3,250 +3,121 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mandarin Learning Reader: Learn Mandarin from any Chinese e-book</title>
-<meta name="description" content="A free desktop app that turns any Chinese EPUB into an interactive Mandarin tutor: pinyin over every character, natural read-aloud, and offline speak-back pronunciation grading." />
+<title>Mandarin Learning Reader</title>
+<meta name="description" content="A free desktop app that turns a Chinese EPUB into a read-aloud, speak-back tutor: pinyin over every character, neural voices, and offline per-character grading of your pronunciation." />
+<link rel="stylesheet" href="assets/family.css"/>
 <style>
-@font-face{font-family:"Source Serif 4";src:url("fonts/SourceSerif4-400.woff2")format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Source Serif 4";src:url("fonts/SourceSerif4-600.woff2")format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:"IBM Plex Sans";src:url("fonts/IBMPlexSans-400.woff2")format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"IBM Plex Sans";src:url("fonts/IBMPlexSans-600.woff2")format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:"IBM Plex Mono";src:url("fonts/IBMPlexMono-400.woff2")format("woff2");font-weight:400;font-display:swap}
-
-  :root {
-    --ink: #1C1E1B;
-    --paper: #EDEDE7;
-    --rule: #C6C7BF;
-    --soft: #52564E;
-    --gold: #8C3A1E;
-    --teal: #2C5852;
-    --red: #C0392B;
-    --jade: #1f9d3b;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
-    line-height: 1.7;
-    font-size: 18px;
-  }
-  .hero { width: 100%; background: #14142b; overflow: hidden; }
-  .hero svg { width: 100%; height: 320px; display: block; }
-  .container { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
-  .kicker {
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 13px;
-    color: var(--red);
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 14px;
-  }
-  h1 { font-size: 40px; line-height: 1.2; text-align: center; margin: 0 0 18px; }
-  .lede { font-size: 21px; color: #33334d; text-align: center; margin: 0 auto 8px; max-width: 680px; }
-  .byline { color: var(--soft); font-style: italic; margin: 22px 0 30px; text-align: center; }
-  h2 { font-size: 28px; margin: 56px 0 16px; border-bottom: 1px solid var(--rule); padding-bottom: 8px; }
-  h3 { font-size: 20px; margin: 0 0 8px; }
-  p { margin: 0 0 18px; }
-  a { color: var(--teal); }
-  em.py { font-style: normal; color: var(--soft); font-size: 0.8em; }
-  .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 36px 0; }
-  .card {
-    background: #F5F5F0; border: 1px solid var(--rule); border-radius: 0;
-    padding: 22px 22px; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  }
-  .card .ico { font-size: 26px; }
-  .card h3 { font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; margin-top: 8px; }
-  .card p { font-size: 15.5px; color: #444; margin: 0; line-height: 1.6; }
-  .steps { counter-reset: step; list-style: none; padding: 0; margin: 28px 0; }
-  .steps li {
-    position: relative; padding: 14px 0 14px 56px; border-bottom: 1px dashed var(--rule);
-  }
-  .steps li::before {
-    counter-increment: step; content: counter(step);
-    position: absolute; left: 0; top: 12px;
-    width: 36px; height: 36px; border-radius: 0;
-    background: var(--red); color: #F5F5F0; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 700; display: flex; align-items: center; justify-content: center;
-  }
-  .langs { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; justify-content: center; }
-  .chip {
-    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600;
-    background: rgba(192,57,43,0.08); color: var(--red);
-    border: 1px solid rgba(192,57,43,0.28); border-radius: 0; padding: 7px 16px;
-  }
-  blockquote {
-    border-left: 4px solid var(--gold); margin: 28px 0; padding: 4px 24px;
-    font-style: italic; background: rgba(212, 165, 55, 0.08);
-  }
-  .grade { text-align: center; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 30px 0 10px; }
-  .grade span { font-size: 40px; font-weight: 700; margin: 0 6px; }
-  .g-ok { color: var(--jade); }
-  .g-amber { color: var(--gold); }
-  .g-bad { color: var(--red); }
-  .grade .rp { font-size: 13px; color: var(--soft); }
-  .btnrow { text-align: center; margin: 44px 0 8px; }
-  .btn {
-    display: inline-block; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 24px;
-    border-radius: 0; margin: 6px;
-  }
-  .btn-solid { background: var(--ink); color: #F5F5F0; }
-  .btn-ghost { border: 1px solid var(--ink); color: var(--ink); }
-  .note {
-    background: #F5F5F0; border: 1px solid var(--rule); border-left: 4px solid var(--teal);
-    border-radius: 0; padding: 16px 22px; font-size: 15.5px; color: #444;
-    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 30px 0;
-  }
-  .footer { text-align: center; color: var(--soft); font-size: 14px; margin-top: 60px; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; }
-  @media (max-width: 560px) {
-    h1 { font-size: 30px; }
-    .features { grid-template-columns: 1fr; }
-    .hero svg { height: 240px; }
-  }
+  *{box-sizing:border-box;border-radius:0}
+  html,body{margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-head);font-size:18px;line-height:1.65}
+  a{color:var(--signal);text-underline-offset:2px}
+  a:hover{color:var(--ink)}
+  :focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+  .page{max-width:72rem;margin:0 auto;padding:40px 24px 80px}
+  .zh{font-family:"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif}
+  .head{display:grid;grid-template-columns:minmax(0,1fr);gap:28px 48px;align-items:start}
+  @media(min-width:960px){.head{grid-template-columns:minmax(0,22rem) minmax(0,1fr)}}
+  .eyebrow{font-family:var(--font-display);font-style:italic;font-size:19px;color:var(--signal-2);margin:0 0 8px}
+  h1{font-family:var(--font-display);font-weight:600;font-size:clamp(36px,4.6vw,54px);line-height:1.04;letter-spacing:-.015em;margin:0 0 16px}
+  .lede{font-size:19px;color:var(--ink-2);margin:0 0 22px}
+  .mark{display:flex;align-items:flex-end;gap:10px;margin:0 0 22px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:12px 0}
+  .mark ruby{font-size:46px;line-height:1.5;ruby-position:over}
+  .mark rt{font-family:var(--font-display);font-style:italic;font-size:15px;color:var(--signal-2)}
+  .mark .gl{font-family:var(--font-body);font-size:13.5px;color:var(--ink-2);margin-left:auto;max-width:12rem;line-height:1.4}
+  .btn{display:inline-block;padding:11px 20px;font:600 15.5px/1.2 var(--font-body);text-decoration:none;border:1px solid var(--edge);color:var(--ink);background:var(--panel)}
+  .btn.primary{background:var(--signal);border-color:var(--signal);color:var(--paper)}
+  .btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .btns{display:flex;flex-wrap:wrap;gap:10px}
+  figure{margin:0}
+  figure img{display:block;width:100%;height:auto;border:1px solid var(--rule)}
+  figcaption{font-family:var(--font-body);font-size:13.5px;color:var(--ink-2);margin-top:8px}
+  h2{font-family:var(--font-display);font-weight:600;font-size:30px;line-height:1.15;margin:0 0 14px}
+  .row{display:grid;grid-template-columns:minmax(0,1fr);gap:28px 48px;margin-top:64px;border-top:1px solid var(--rule);padding-top:22px}
+  @media(min-width:960px){.row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+  ol.session{margin:0;padding:0;list-style:none;counter-reset:s}
+  ol.session li{counter-increment:s;display:grid;grid-template-columns:2rem minmax(0,1fr);padding:10px 0;border-bottom:1px solid var(--rule)}
+  ol.session li::before{content:counter(s);font-family:var(--font-display);font-style:italic;font-size:21px;color:var(--signal)}
+  ol.session b{font-weight:600}
+  pre{margin:0;background:var(--panel);border:1px solid var(--rule);padding:14px 16px;font-family:var(--font-mono);font-size:14px;line-height:1.6;overflow-x:auto}
+  .cap{font-family:var(--font-body);font-size:13.5px;color:var(--ink-2);margin:8px 0 0}
+  table{border-collapse:collapse;width:100%;font-family:var(--font-body);font-size:15px}
+  th,td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);font-weight:600;border-bottom:2px solid var(--ink)}
+  kbd{font-family:var(--font-mono);font-size:13.5px;border:1px solid var(--edge);padding:1px 6px;background:var(--panel)}
+  p{margin:0 0 14px}
+  .note{border:1px solid var(--edge);padding:14px 18px;font-family:var(--font-body);font-size:15px;color:var(--ink-2)}
+  .note b{color:var(--ink)}
+  footer{border-top:1px solid var(--rule);margin-top:60px;padding-top:16px;font-family:var(--font-body);font-size:14px;color:var(--ink-2)}
 </style>
 </head>
 <body>
-<a href="overview/" data-overview-link style="display:block;background:#1C1E1B;color:#EDEDE7;text-align:center;padding:11px 18px;font:600 14.5px/1.45 -apple-system,'Helvetica Neue',Arial,sans-serif;letter-spacing:.01em;text-decoration:none">Read the full writeup&nbsp;&rarr;</a>
+<a href="overview/" data-overview-link style="display:block;background:var(--ink);color:var(--paper);text-align:center;padding:11px 18px;font:600 14.5px/1.45 var(--font-body);letter-spacing:.01em;text-decoration:none">Read the full writeup&nbsp;&rarr;</a>
 
-<div class="hero">
-  <svg viewBox="0 0 780 320" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A Chinese character with pinyin above it, beside an open book and sound waves">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#1c1c3d"/>
-        <stop offset="1" stop-color="#101025"/>
-      </linearGradient>
-    </defs>
-    <rect width="780" height="320" fill="url(#bg)"/>
-
-    <!-- open book (left) -->
-    <g transform="translate(150,152)">
-      <path d="M0 0 C-70 -28 -140 -22 -180 -6 L-180 96 C-140 80 -70 74 0 102 Z" fill="#f3ead6" opacity="0.96"/>
-      <path d="M0 0 C70 -28 140 -22 180 -6 L180 96 C140 80 70 74 0 102 Z" fill="#e7dcc2" opacity="0.96"/>
-      <g stroke="#b9ac8c" stroke-width="3" opacity="0.8">
-        <line x1="-150" y1="6" x2="-30" y2="-6"/>
-        <line x1="-150" y1="28" x2="-30" y2="16"/>
-        <line x1="-150" y1="50" x2="-30" y2="38"/>
-        <line x1="-150" y1="72" x2="-30" y2="60"/>
-      </g>
-      <!-- pinyin + character card on the right page -->
-      <text x="95" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="20" fill="#C0392B" opacity="0.85">xué</text>
-      <text x="95" y="86" text-anchor="middle" font-family="'PingFang SC','Noto Sans CJK SC',serif" font-size="62" fill="#1C1E1B">學</text>
-    </g>
-
-    <!-- sound waves (right) -->
-    <g transform="translate(470,152)" stroke-linecap="round" fill="none">
-      <g stroke="#8C3A1E" stroke-width="7">
-        <line x1="0" y1="-12" x2="0" y2="12"/>
-        <line x1="24" y1="-34" x2="24" y2="34"/>
-        <line x1="48" y1="-58" x2="48" y2="58"/>
-      </g>
-      <g stroke="#2C5852" stroke-width="7">
-        <line x1="72" y1="-40" x2="72" y2="40"/>
-        <line x1="96" y1="-66" x2="96" y2="66"/>
-        <line x1="120" y1="-30" x2="120" y2="30"/>
-      </g>
-      <g stroke="#C0392B" stroke-width="7">
-        <line x1="144" y1="-50" x2="144" y2="50"/>
-        <line x1="168" y1="-22" x2="168" y2="22"/>
-      </g>
-    </g>
-
-    <!-- green check (spoken correctly) -->
-    <g transform="translate(690,96)">
-      <circle r="26" fill="#1f9d3b"/>
-      <path d="M-11 1 L-3 10 L13 -10" stroke="#F5F5F0" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
-  </svg>
-</div>
-
-<div class="container">
-  <p class="kicker">A free, open-source desktop app</p>
-  <h1>Mandarin Learning Reader</h1>
-  <p class="lede">Turn any Chinese e-book into a read-aloud, speak-back Mandarin
-  tutor: pinyin over every character, and instant feedback on how you said it.</p>
-  <p class="byline">By Jeremy Lee</p>
-
-  <div class="langs">
-    <span class="chip">拼 Pinyin over every character</span>
-    <span class="chip">Hear it</span>
-    <span class="chip">Speak it back</span>
-    <span class="chip">简 ⇄ 繁 Simplified / Traditional</span>
+<main class="page">
+  <div class="head">
+    <div>
+      <p class="eyebrow">A free, open-source desktop app</p>
+      <h1>Mandarin Learning Reader</h1>
+      <p class="lede">Open any Chinese e-book. Each line appears with pinyin over every character, is read aloud in a neural Mandarin voice, and then the app listens to you say it back and grades every character, offline.</p>
+      <div class="mark" aria-label="The character xué, study, with its pinyin">
+        <ruby class="zh" lang="zh-Hant">學<rt>xué</rt></ruby><ruby class="zh" lang="zh-Hant">生<rt>shēng</rt></ruby>
+        <span class="gl">Pinyin from pypinyin, set over each character as the app does it.</span>
+      </div>
+      <div class="btns">
+        <a class="btn primary" href="https://github.com/lyhjeremy/mandarin-learning-reader">Get the app on GitHub</a>
+        <a class="btn" href="https://github.com/lyhjeremy/mandarin-learning-reader#getting-started">Setup guide</a>
+      </div>
+    </div>
+    <figure>
+      <img src="docs/reader-read.png" width="2480" height="1700" alt="The reading view: a large sentence from a Chinese book with pinyin above each character, the previous and next sentences faded above and below, and a media-player bar with Prev, Record, Play, Replay, Next and Stop buttons, each showing its keyboard shortcut.">
+      <figcaption>The modern player's reading view, from <code>docs/</code>. Voice, speed and script menus sit at the bottom right.</figcaption>
+    </figure>
   </div>
 
-  <h2>What it does</h2>
-  <p>You give it a Chinese EPUB; it becomes a patient tutor. The app shows one
-  short sentence at a time: big, centred, with the pinyin printed above every
-  character. Reads it aloud in a natural Mandarin voice, and then <em>listens to
-  you say it back</em>. It marks each character green, red, or amber depending on
-  how close you got, and moves on when you nail it. Everything runs on your own
-  machine, for free, and your voice never leaves your computer.</p>
-
-  <div class="grade">
-    <span class="g-ok">學</span><span class="g-ok">習</span><span class="g-amber">中</span><span class="g-bad">文</span>
-    <div class="rp">green = right · amber = right sound, wrong character · red = missed</div>
-  </div>
-
-  <div class="features">
-    <div class="card">
-      <div class="ico">拼</div>
-      <h3>Pinyin on every word</h3>
-      <p>Tone-marked pinyin sits above each character, so you always know how it's pronounced, no lookups.</p>
+  <div class="row">
+    <div>
+      <h2>A session</h2>
+      <ol class="session">
+        <li><span><b>Open a Chinese EPUB.</b> The app lists the chapters, flags cover and contents pages, and splits the text into short, speakable lines.</span></li>
+        <li><span><b>Read along.</b> The current line is large, with tone-marked pinyin above every character.</span></li>
+        <li><span><b>Listen.</b> One of six edge-tts voices, Mainland or Taiwan, at speeds from 0.5× to 1.5×.</span></li>
+        <li><span><b>Speak it back.</b> Whisper transcribes you on your own computer, and each character is marked right or missed.</span></li>
+        <li><span><b>Move on.</b> At 90% or higher the app advances to the next line by itself.</span></li>
+      </ol>
     </div>
-    <div class="card">
-      <h3>Natural voices, free</h3>
-      <p>Microsoft's neural Mandarin voices read each sentence: male or female, Mainland or Taiwan, five speeds.</p>
-    </div>
-    <div class="card">
-      <h3>Speak it back</h3>
-      <p>Record yourself and a private, offline speech model checks your pronunciation. No internet, no account.</p>
-    </div>
-    <div class="card">
-      <h3>Character-level feedback</h3>
-      <p>Every character turns green, red, or amber. Score 90% and the app advances to the next line on its own.</p>
-    </div>
-    <div class="card">
-      <div class="ico">简繁</div>
-      <h3>Simplified ⇄ Traditional</h3>
-      <p>Read a Simplified book as Traditional or vice versa with one toggle, grading understands both.</p>
-    </div>
-    <div class="card">
-      <h3>Picks up where you left off</h3>
-      <p>Reopens your last book, chapter, and sentence, and remembers your voice, speed, and theme.</p>
+    <div>
+      <h2>The grader, from the command line</h2>
+      <pre class="zh-mono"><span>$ python3 mandarin_learner.py --grade "我是學生" "我是學森"</span>
+original : 我是學生
+heard    : 我是學森<!-- ledger-allow: checkmark, emoji -->
+marks    : ✓✓✓✗
+accuracy : 75%   auto_advance=False</pre>
+      <p class="cap">Run 2026-10-26. The grader aligns what Whisper heard against the original with difflib, after converting both to Simplified, so 學 and 学 count as the same character. Lenient mode also accepts a substituted character with the same pinyin.</p>
     </div>
   </div>
 
-  <h2>How it works</h2>
-  <ol class="steps">
-    <li><strong>Open a Chinese EPUB.</strong> The app finds the chapters and splits each into short, speakable lines.</li>
-    <li><strong>Read along.</strong> The current sentence is shown large, with pinyin above every character.</li>
-    <li><strong>Listen.</strong> Hear it in a natural Mandarin voice, as slow or fast as you like.</li>
-    <li><strong>Speak it back.</strong> Record yourself; the app grades each character and shows you exactly what to fix.</li>
-  </ol>
-
-  <blockquote>Built by a Cantonese speaker learning Mandarin, one that reads
-  Traditional comfortably and wanted to get faster at Simplified. The whole loop
-  is read, listen, speak, and get corrected, one sentence at a time.</blockquote>
-
-  <div class="note">
-    <strong>Private &amp; yours:</strong> the app ships <em>no</em> books. You bring your own
-    EPUB files, for e-books you own or public-domain titles. Speech recognition runs
-    entirely <em>on your computer</em> (a one-time model download on first use); your
-    microphone audio is never uploaded.
+  <div class="row">
+    <div>
+      <h2>Keyboard</h2>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>Space</kbd></td><td>Read the current line aloud</td></tr>
+          <tr><td><kbd>R</kbd></td><td>Record; press again to stop and be graded</td></tr>
+          <tr><td><kbd>Enter</kbd></td><td>Replay the line</td></tr>
+          <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Previous or next line</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Stop playing or recording</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2>Why I built it</h2>
+      <p>I'm a Cantonese speaker learning Mandarin. I read Traditional characters comfortably and wanted to get faster at Simplified, from real books instead of flashcards. The Script menu converts a whole book between the two with OpenCC.</p>
+      <div class="note"><b>Your books, your machine.</b> The app ships no books: bring EPUBs you own or public-domain titles. Speech recognition runs on your computer after a one-time model download, and microphone audio is never uploaded. Only the text of each new line goes online, to Microsoft's edge-tts service, to fetch its audio.</div>
+    </div>
   </div>
 
-  <h2>Get it</h2>
-  <p>The app is open source. Grab the code, install a few free Python packages, and
-  run it. Full step-by-step instructions are in the README.</p>
-
-  <div class="btnrow">
-    <a class="btn btn-solid" href="https://github.com/lyhjeremy/mandarin-learning-reader">Get the app on GitHub</a>
-    <a class="btn btn-ghost" href="https://github.com/lyhjeremy/mandarin-learning-reader#quick-start">Read the setup guide</a>
-  </div>
-
-  <p class="footer">Built with Python, Microsoft edge-tts &amp; Whisper &middot; &copy; 2026 Jeremy Lee &middot; MIT License</p>
-</div>
+  <footer>Python, edge-tts, faster-whisper, pypinyin, OpenCC, Tkinter · <a href="https://github.com/lyhjeremy/mandarin-learning-reader">Source on GitHub</a> · MIT © 2026 Jeremy Lee</footer>
+</main>
 </body>
 </html>

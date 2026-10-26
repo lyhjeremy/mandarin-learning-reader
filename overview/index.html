@@ -3,55 +3,57 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Mandarin Learning Reader: it listens to you read, and marks every character</title>
-<meta name="description" content="Turns any Chinese e-book into a patient Mandarin tutor. Pinyin above every character, natural speech, and character-by-character pronunciation scoring that runs entirely on your own machine." />
-<meta name="theme-color" content="#EDEDE7" />
+<title>Mandarin Learning Reader: read a Chinese e-book aloud and get each character graded</title>
+<meta name="description" content="A desktop app that splits any Chinese EPUB into short lines with pinyin over every character, reads them aloud, and grades your spoken attempt character by character with Whisper running locally." />
+<meta name="theme-color" content="#EEEDE6" />
 <meta property="og:title" content="Mandarin Learning Reader" />
-<meta property="og:description" content="Read a real book one sentence at a time, say it back, and get every character marked green, amber or red. Free, offline, private." />
+<meta property="og:description" content="Pinyin over every character, natural read-aloud, and offline speak-back grading per character. Free and open source." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lyhjeremy.github.io/mandarin-learning-reader/overview/" />
+<link href="" rel="stylesheet" />
 <style>
-@font-face{font-family:"Source Serif 4";src:url("../fonts/SourceSerif4-400.woff2")format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Source Serif 4";src:url("../fonts/SourceSerif4-600.woff2")format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:"IBM Plex Sans";src:url("../fonts/IBMPlexSans-400.woff2")format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"IBM Plex Sans";src:url("../fonts/IBMPlexSans-600.woff2")format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:"IBM Plex Mono";src:url("../fonts/IBMPlexMono-400.woff2")format("woff2");font-weight:400;font-display:swap}
-
   :root {
-    --paper: #EDEDE7;
-    --card: #F5F5F0;
-    --plate: #F5F5F0;
-    --ink: #1C1E1B;
-    --ink2: #3d3d55;
-    --muted: #52564E;
-    --rule: #C6C7BF;
-    --accent: #8C3A1E;
-    --accent2: #7A5A1E;
-    --link: #8C3A1E;
-    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
-    --sans: 'Source Sans 3', -apple-system, system-ui, sans-serif;
-    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
-    --shadow: 0 1px 2px rgba(26,26,46,.05), 0 10px 34px rgba(26,26,46,.07);
+    --paper: #EEEDE6;
+    --card: #F6F5EF;
+    --plate: #F6F5EF;
+    --ink: #1B1E24;
+    --ink2: #4F5560;
+    --muted: #4F5560;
+    --rule: #C8C9C2;
+    --accent: #9E3A2C;
+    --accent2: #284B73;
+    --link: #9E3A2C;
+    --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+    --display: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --edge: #757A80;
     --spine:  92px;
     --col:    min(100% - 2.6rem, 62rem);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --paper: #14141f;
-      --card: #1c1c2a;
-      --plate: #f7f4ec;
-      --ink: #F2EFE6;
-      --ink2: #C9C4B6;
-      --muted: #918B7D;
-      --rule: #33313f;
-      --accent: #FB7185;
-      --accent2: #E3BC5E;
-      --link: #22D3EE;
-      --shadow: 0 1px 2px rgba(0,0,0,.32), 0 10px 34px rgba(0,0,0,.4);
+      --paper: #181A1F;
+      --card: #21242A;
+      --plate: #21242A;
+      --ink: #E5E6E2;
+      --ink2: #A5AAB3;
+      --muted: #A5AAB3;
+      --rule: #3A3E45;
+      --accent: #D88E80;
+      --accent2: #86A9D6;
+      --link: #D88E80;
+      --edge: #6B7079;
     }
   }
 
-  * { box-sizing: border-box; }
+  @font-face{font-family:"Source Serif 4";src:url("../fonts/SourceSerif4-400.woff2")format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Source Serif 4";src:url("../fonts/SourceSerif4-600.woff2")format("woff2");font-weight:600;font-display:swap}
+  @font-face{font-family:"IBM Plex Sans";src:url("../fonts/IBMPlexSans-400.woff2")format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"IBM Plex Sans";src:url("../fonts/IBMPlexSans-600.woff2")format("woff2");font-weight:600;font-display:swap}
+  @font-face{font-family:"IBM Plex Mono";src:url("../fonts/IBMPlexMono-400.woff2")format("woff2");font-weight:400;font-display:swap}
+
+  * { box-sizing: border-box; border-radius: 0; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0; background: var(--paper); color: var(--ink);
@@ -210,64 +212,84 @@
     html { scroll-behavior: auto; }
     .btn { }
   }
+  @font-face{font-family:"Newsreader";src:url("../fonts/Newsreader-600.woff2")format("woff2");font-weight:600;font-style:normal;font-display:swap}
+  @font-face{font-family:"Newsreader";src:url("../fonts/Newsreader-400i.woff2")format("woff2");font-weight:400;font-style:italic;font-display:swap}
 
+  .btn:hover { transform: none; background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .pull { border: 1px solid var(--edge); border-left: 1px solid var(--edge); background: transparent; }
+  .term { background: var(--card); color: var(--ink); border: 1px solid var(--rule); }
+  .term .c { color: var(--muted); } .term .g { color: var(--accent2); } .term .y { color: var(--accent); }
+  .logo, .hero h1, h2, .claim .n, .bignum { font-family: var(--display); }
+
+  /* Language: a well-set book. Newsreader display, italic glosses, notes in the margin. */
+  .logo { font-weight: 600; font-size: 23px; letter-spacing: 0; }
+  .hero h1 { font-weight: 600; font-size: clamp(42px, 6.6vw, 80px); letter-spacing: -.015em; line-height: 1.02; max-width: 16ch; }
+  .kicker { font-family: var(--display); font-style: italic; font-weight: 400; font-size: clamp(20px, 2.3vw, 25px); color: var(--accent2); }
+  h2 { font-weight: 600; letter-spacing: -.01em; font-size: clamp(29px, 3.9vw, 40px); }
+  .claim, .claim:first-child, .claim:nth-child(2) { border-top: 1px solid var(--rule); }
+  .claim .n { font-weight: 600; font-size: 44px; letter-spacing: -.01em; color: var(--accent2); }
+  .bignum { font-weight: 600; color: var(--accent2); }
+  .eyebrow { font-family: var(--display); font-style: italic; text-transform: none; letter-spacing: 0;
+             font-size: 18px; font-weight: 400; color: var(--accent); }
+  :root { --spine: 0px; }
+  .route::before, .stop::before { display: none; }
+  .stop { padding-left: 0; }
+  @media (min-width: 980px) {
+    .stop { display: grid; grid-template-columns: 11rem minmax(0, 1fr); column-gap: 40px; }
+    .stop > * { grid-column: 2; }
+    .stop > .eyebrow { grid-column: 1; grid-row: 1 / span 2; text-align: right; padding-top: 14px;
+                       border-top: 1px solid var(--rule); }
+  }
+
+
+  /* Signature: a real paragraph split into learning units, one unit glossed with pinyin ruby. */
+  .units { margin: 44px 0 0; border-top: 2px solid var(--ink); padding: 0; list-style: none; counter-reset: u; }
+  .units li { counter-increment: u; display: grid; grid-template-columns: 2.4rem minmax(0,1fr) auto; gap: 0 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .units li::before { content: counter(u); font-family: var(--display); font-style: italic; font-size: 20px; color: var(--accent); }
+  .units .zh { font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; font-size: 21px; color: var(--ink2); letter-spacing: .04em; overflow-wrap: anywhere; }
+  .units .ct { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .units li.on .zh { color: var(--ink); font-size: clamp(26px, 4.6vw, 40px); letter-spacing: .02em; line-height: 2.1; }
+  .units ruby { ruby-position: over; margin: 0 .1em; }
+  .units rt { font-family: var(--display); font-style: italic; font-size: 15px; color: var(--accent2); letter-spacing: 0; }
+  .units-cap { font-family: var(--sans); font-size: 14px; color: var(--muted); margin: 12px 0 0; line-height: 1.5; max-width: 64ch; }
+  @media (max-width: 520px) { .units li { grid-template-columns: 1.6rem minmax(0,1fr); } .units .ct { grid-column: 2; } .units rt { font-size: 12px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="masthead">
-    <div class="logo"><span class="dot" aria-hidden="true"></span>Mandarin Learning Reader</div>
-    <div class="tagline">read it, hear it, say it, get marked</div>
+    <div class="logo">Mandarin Learning Reader</div>
+    <div class="tagline">read it, hear it, say it, get graded</div>
   </header>
 
   <section class="hero">
-    <p class="kicker">Flashcards teach you words. Books teach you Chinese.</p>
-    <h1>This one listens while you read it out loud.</h1>
+    <p class="kicker">A free desktop app for learning to read and speak Mandarin</p>
+    <h1>Read a Chinese book aloud and get every character graded.</h1>
 
     <p class="hero-sub">
-      Point it at any Chinese e-book and it becomes a patient tutor. One sentence at
-      a time, large and centred, with <strong>pinyin printed above every
-      character</strong>. It reads the line aloud in a natural voice, then
-      <strong>listens to you say it back</strong> and colours every character green,
-      amber or red. Score 90% and it moves you on by itself. All of it runs on your
-      own computer, for free, and your voice never leaves the machine.
+      Open any Chinese EPUB and the app splits it into short, speakable lines with
+      tone-marked pinyin over every character. It reads each line in a neural
+      Mandarin voice, records you saying it back, transcribes you with Whisper on
+      your own machine, and marks each character right or missed. At 90% accuracy it
+      moves to the next line on its own.
     </p>
 
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/lyhjeremy/mandarin-learning-reader">Get the app</a>
-      <a class="textlink" href="../">or the quick tour</a>
+      <a class="textlink" href="../">The short tour</a>
     </div>
 
-    <figure style="margin-top:38px">
-      <img width="2480" height="1700" class="shot" src="../docs/reader.png" fetchpriority="high"
-        alt="The modern player after a spoken attempt: a large karaoke-style sentence with pinyin above every character, each character marked green for correct, amber for right sound wrong character, or red for missed, with an accuracy score on the transport bar." />
-      <figcaption>
-        After you've spoken. Green is correct, amber is the right sound on the
-        wrong character, red is missed, and the score decides whether it advances.
-      </figcaption>
-    </figure>
-
-    <div class="claims">
-      <div class="claim">
-        <div class="n">3 colours</div>
-        <p>per character, not one score for the sentence. You find out
-           <em>which</em> character you missed.</p>
-      </div>
-      <div class="claim">
-        <div class="n">90%</div>
-        <p>and it advances on its own, so a good run flows without touching the
-           mouse.</p>
-      </div>
-      <div class="claim">
-        <div class="n">5 speeds</div>
-        <p>from 0.5× while a phrase is new up to 1.5× once it clicks.</p>
-      </div>
-      <div class="claim">
-        <div class="n">Private</div>
-        <p>Speech recognition runs locally. No account, no subscription, no audio
-           upload.</p>
-      </div>
-    </div>
+    <ol class="units" aria-label="One paragraph split into learning units, with the second unit shown with pinyin">
+      <li><span class="zh" lang="zh-Hans">原来你不过是一个被经历塑造和被人影响的产物。</span><span class="ct">21 chars</span></li>
+      <li class="on"><span class="zh" lang="zh-Hans"><ruby>我<rt>wǒ</rt></ruby><ruby>们<rt>men</rt></ruby><ruby>常<rt>cháng</rt></ruby><ruby>说<rt>shuō</rt></ruby><ruby>某<rt>mǒu</rt></ruby><ruby>个<rt>gè</rt></ruby><ruby>国<rt>guó</rt></ruby><ruby>家<rt>jiā</rt></ruby>、</span><span class="ct">8 chars</span></li>
+      <li><span class="zh" lang="zh-Hans">某个地区、某种教育，</span><span class="ct">8 chars</span></li>
+      <li><span class="zh" lang="zh-Hans">甚至某种职业的人有很大不同。</span><span class="ct">13 chars</span></li>
+    </ol>
+    <p class="units-cap">Two sentences from the book in the screenshot below, run through the engine's
+      <code>chunk_text_for_learning()</code> and <code>annotate()</code> on 2026-10-26. The second
+      sentence breaks at its enumeration commas into units of 8, 8 and 13 characters; the
+      pinyin comes from pypinyin, which reads each run of characters as a phrase so that
+      characters with more than one reading get the right one.</p>
   </section>
 </div>
 
@@ -275,125 +297,113 @@
 <div class="route">
 
   <section class="stop">
-    <p class="eyebrow">Start · the gap it fills</p>
-    <h2>Reading practice that can hear you</h2>
+    <p class="eyebrow">The gap</p>
+    <h2>Reading practice that checks what you said</h2>
     <p>
-      Most Chinese reading tools show you the text and, at best, read it to you.
-      The half that is missing is the half that matters for speaking: nobody checks
-      whether what came out of your mouth was right.
-    </p>
-    <p>
-      A tutor does that, and a tutor is expensive and only available on Tuesdays.
-      This does the narrow, mechanical part of the job, did you say the characters
-      on the screen, for free, on demand, at whatever hour you happen to be reading.
+      Most Chinese reading tools show the text and at best read it to you. Nothing
+      checks whether what you said matched the characters on the page. A tutor does
+      that, at a price and on a schedule. This app does the mechanical part of the
+      job (did you say the characters on screen?) for free, whenever you happen to
+      be reading.
     </p>
   </section>
 
   <section class="stop stop--key">
-    <p class="eyebrow">↓ the loop</p>
-    <h2>Read, listen, speak, get corrected</h2>
-    <div class="grid">
-      <div class="cell">
-        <h3>Pinyin above every character</h3>
-        <p>Tone-marked, sitting directly above the character, so you never break
-           the sentence to look something up.</p>
-      </div>
-      <div class="cell">
-        <h3>One sentence at a time</h3>
-        <p>The current line is large and centred; neighbours sit faded above and
-           below, like scrolling lyrics.</p>
-      </div>
-      <div class="cell">
-        <h3>Sensible sentence sizing</h3>
-        <p>Long paragraphs split at natural pauses, and lines that come out too
-           short get stacked back together. Each unit is a comfortable mouthful.</p>
-      </div>
-      <div class="cell">
-        <h3>Simplified or Traditional</h3>
-        <p>Flip the whole text either way from a menu, any time, whichever the
-           book was written in.</p>
-      </div>
-      <div class="cell">
-        <h3>Natural voices, four ways</h3>
-        <p>Male or female, Mainland or Taiwan accent. Once a line has been read,
-           replaying it is instant.</p>
-      </div>
-      <div class="cell">
-        <h3>A gentler mode</h3>
-        <p>Lenient grading counts near-misses that <em>sound</em> right, so
-           homophones stop feeling like a punishment.</p>
-      </div>
-    </div>
+    <p class="eyebrow">The loop</p>
+    <h2>Read, listen, speak, get graded</h2>
+    <figure>
+      <img width="2480" height="1700" class="shot" src="../docs/reader.png" fetchpriority="high"
+        alt="The modern player's graded view: a large karaoke-style line with pinyin above every character, characters colored green, amber or red, faded context lines above and below, and an accuracy score on the transport bar." />
+      <figcaption>
+        The modern player's graded view, from <code>docs/</code>. The current line is
+        large, the neighboring lines sit faded above and below, and the score shows
+        on the transport bar.
+      </figcaption>
+    </figure>
+    <dl class="specs">
+      <div class="spec"><dt>Read</dt><dd>One unit at a time with tone-marked pinyin above each character. Short sentences are joined until a unit has at least 7 characters (up to 15); long sentences are never cut</dd></div>
+      <div class="spec"><dt>Listen</dt><dd>Six edge-tts neural voices, four Mainland and two Taiwan, at 0.5×, 0.75×, 1×, 1.25× or 1.5×. Each line's audio is cached, so replays are instant</dd></div>
+      <div class="spec"><dt>Speak</dt><dd>Press Record, read the line, press again. faster-whisper (the "small" model by default) transcribes the recording on your machine</dd></div>
+      <div class="spec"><dt>Graded</dt><dd>Each character is marked right or missed, with an accuracy score. 90% or higher advances to the next line; this can be switched off</dd></div>
+      <div class="spec"><dt>Script</dt><dd>OpenCC converts the whole book between Simplified and Traditional from a menu</dd></div>
+    </dl>
+  </section>
+
+  <section class="stop">
+    <p class="eyebrow">The grader</p>
+    <h2>Alignment, so one slip doesn't cascade</h2>
+    <p>
+      The grader aligns the transcript against the original with
+      <code>difflib.SequenceMatcher</code> rather than zipping the two strings, so a
+      skipped character doesn't shift every mark after it. Whisper often writes
+      Mandarin in Traditional characters whatever the book uses, so both sides are
+      converted to Simplified before comparing (学 and 學 count as the same), while
+      the display keeps the book's own characters.
+    </p>
+    <p>
+      Lenient mode adds a sound check. Where the alignment finds a substitution, it
+      compares the pinyin of the two characters, and a match is marked amber and
+      counts toward the score. Mandarin has many homophones, and a learner who said
+      the right syllable has done what the exercise asks even when Whisper picks a
+      different character.
+    </p>
+    <div class="term"><pre><span class="c">$ python3 mandarin_learner.py --grade "我是學生" "我是學森"</span>
+original : 我是學生
+heard    : 我是學森<!-- ledger-allow: checkmark, emoji -->
+marks    : <span class="g">✓✓✓</span><span class="y">✗</span>
+accuracy : 75%   auto_advance=False</pre></div>
+    <p style="margin-top:11px;font-family:var(--sans);font-size:14.5px;color:var(--muted)">The command-line grader, run 2026-10-26. 生 (shēng) and 森 (sēn) differ in sound, so Lenient mode would not rescue this one.</p>
+  </section>
+
+  <section class="stop">
+    <p class="eyebrow">Day to day</p>
+    <h2>It remembers where you were</h2>
+    <p>
+      Reopen the app and it returns to the same book, chapter and line, with your
+      voice, speed and settings. Chapters are listed down the side, and pages that
+      look like a cover, copyright notice or contents are flagged so you can skip
+      them.
+    </p>
+    <p>
+      There are two interfaces over the same engine: a media-player layout with a
+      karaoke-style stage, and a classic reader. Both have light and dark themes and
+      keyboard shortcuts for every control. A command-line tool exposes the engine
+      directly for listing chapters, previewing units and pinyin, and testing the
+      grader.
+    </p>
     <figure>
       <img width="2480" height="1700" class="shot" src="../docs/reader-read.png" loading="lazy"
-        alt="The reading and listening view: the current sentence large with pinyin above each character, the previous and next sentences faded above and below, and a round green play button with keyboard shortcuts shown on every control." />
-      <figcaption>Before you speak. Every button shows its keyboard shortcut.</figcaption>
+        alt="The reading view: the current sentence large with pinyin above each character, the previous and next sentences faded above and below, and a round play button with keyboard shortcuts on every control." />
+      <figcaption>The reading view before you speak. Each button shows its shortcut.</figcaption>
     </figure>
   </section>
 
-  <section class="stop">
-    <p class="eyebrow">↓ the marking</p>
-    <h2>Amber is the interesting colour</h2>
-    <p>
-      Green and red are obvious. <strong>Amber</strong>, right sound, wrong
-      character, is the one that teaches you something, because it separates
-      <em>"you can't pronounce this"</em> from <em>"you pronounced a different word
-      that sounds identical."</em> Those are completely different problems and most
-      tools score them the same.
-    </p>
-    <p>
-      That distinction is also why Lenient mode exists. Mandarin has an enormous
-      number of homophones, and a learner who says the right syllable with the right
-      tone has done the thing being practised, even when the recogniser picks a
-      different character.
-    </p>
-  </section>
-
-  <section class="stop">
-    <p class="eyebrow">↓ staying out of the way</p>
-    <h2>It remembers where you were</h2>
-    <p>
-      Close it and reopen it and you are back on the same book, chapter and
-      sentence, with your voice, speed and settings intact. Chapters are listed down
-      the side, with cover, copyright and contents pages flagged so you can skip to
-      the actual reading.
-    </p>
-    <p>
-      There are two interfaces doing the same job: a modern media-player layout
-      that behaves like a cross between a music app and a karaoke machine, and a
-      classic reader. Both have light and dark themes and a full set of keyboard
-      shortcuts, so the whole loop works without reaching for the mouse.
-    </p>
-  </section>
-
   <section class="stop stop--warn">
-    <p class="eyebrow">↓ what it can't do</p>
-    <h2>It checks characters, not tones directly</h2>
+    <p class="eyebrow">Limitations</p>
+    <h2>It checks characters, not tones</h2>
     <p>
-      The scoring works by comparing what the speech recogniser heard against the
-      characters on screen. That is a good proxy for pronunciation and it is not the
-      same thing as tone assessment. A recogniser can be forgiving in ways a native
-      listener would not be, and it can also mishear you when you were right.
+      The score compares what Whisper heard with the characters on screen. That is a
+      proxy for pronunciation, not a tone assessment. Whisper can be more forgiving
+      than a native listener, and it can mishear a correct reading. Lenient mode
+      ignores tones by default when it compares pinyin.
     </p>
     <p>
-      It needs the internet the first time a sentence is spoken, to fetch that
-      line's audio. Everything afterwards, including the speech checking, runs on
-      your machine. And you supply your own books: the repository ships code only,
-      no copyrighted text.
+      Audio comes from Microsoft's online edge-tts service, so each new line needs a
+      connection the first time it is played. Speech recognition runs offline after
+      a one-time model download. The app ships no books: you supply your own EPUBs.
     </p>
   </section>
 
   <section class="stop stop--end">
-    <p class="eyebrow">Finish · what it is built on</p>
-    <h2>Runs on your machine, costs nothing</h2>
+    <p class="eyebrow">Built with</p>
+    <h2>Python on your own machine, no cost</h2>
     <dl class="specs">
-      <div class="spec"><dt>Speech</dt><dd>Neural Mandarin voices, male or female, Mainland or Taiwan</dd></div>
-      <div class="spec"><dt>Recognition</dt><dd>Runs locally. Microphone audio is never uploaded</dd></div>
-      <div class="spec"><dt>Scoring</dt><dd>Per character: correct, right-sound, or missed, plus an overall accuracy score</dd></div>
-      <div class="spec"><dt>Auto-advance</dt><dd>At 90% or higher, switchable off</dd></div>
-      <div class="spec"><dt>Interfaces</dt><dd>A modern player and a classic reader, both light and dark</dd></div>
-      <div class="spec"><dt>Books</dt><dd>You supply your own. Code only in the repository</dd></div>
-      <div class="spec"><dt>Sibling</dt><dd><a href="https://lyhjeremy.github.io/cantonese-learner-v2/">Cantonese Learner V2</a>, the same loop applied to daily Hong Kong news and conversations</dd></div>
+      <div class="spec"><dt>EPUB</dt><dd>ebooklib and BeautifulSoup for the spine, table of contents and text</dd></div>
+      <div class="spec"><dt>Pinyin</dt><dd>pypinyin, phrase-aware for characters with several readings</dd></div>
+      <div class="spec"><dt>Speech</dt><dd>edge-tts neural voices (online); faster-whisper speech-to-text (offline), with openai-whisper as a fallback</dd></div>
+      <div class="spec"><dt>Grading</dt><dd>difflib alignment, OpenCC script normalization, optional pinyin match</dd></div>
+      <div class="spec"><dt>Interface</dt><dd>Tkinter, two layouts; sounddevice for the microphone, pygame for playback</dd></div>
+      <div class="spec"><dt>Sibling</dt><dd><a href="https://lyhjeremy.github.io/cantonese-learner-v2/">Cantonese Learner V2</a>, the same loop for Cantonese with daily Hong Kong news; <a href="https://lyhjeremy.github.io/epub-to-audiobook/">EPUB to Audiobook</a>, whose pipeline this reuses</dd></div>
     </dl>
   </section>
 
@@ -402,17 +412,17 @@
 
 <div class="wrap">
   <section class="close">
-    <h2>Learn from a book you actually want to read</h2>
+    <h2>Learn from a book you want to read</h2>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/lyhjeremy/mandarin-learning-reader">Get the app</a>
-      <a class="textlink" href="../">or the quick tour</a>
+      <a class="textlink" href="../">The short tour</a>
     </div>
   </section>
 
   <footer>
     <p>
       Mandarin Learning Reader ·
-      <a href="../">Showcase</a> ·
+      <a href="../">Tour</a> ·
       <a href="https://github.com/lyhjeremy/mandarin-learning-reader">Source</a> ·
       MIT © 2026 Jeremy Lee
     </p>
