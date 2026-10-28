@@ -253,6 +253,30 @@
   .units rt { font-family: var(--display); font-style: italic; font-size: 15px; color: var(--accent2); letter-spacing: 0; }
   .units-cap { font-family: var(--sans); font-size: 14px; color: var(--muted); margin: 12px 0 0; line-height: 1.5; max-width: 64ch; }
   @media (max-width: 520px) { .units li { grid-template-columns: 1.6rem minmax(0,1fr); } .units .ct { grid-column: 2; } .units rt { font-size: 12px; } }
+
+  /* The grader, replayed: six transcripts, each graded by the real grade(). */
+  .grader { margin: 26px 0 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); padding: 14px 0 16px; }
+  .gr-q { font-family: var(--display); font-style: italic; font-size: 19px; color: var(--accent); margin: 0 0 10px; max-width: none; }
+  .gr-q span { font-style: normal; font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif; color: var(--ink); }
+  .gr-tries { display: flex; flex-wrap: wrap; gap: 6px; }
+  .gr-tries button, .gr-len { font: 600 13.5px/1.2 var(--sans); padding: 8px 11px; border: 1px solid var(--edge); background: var(--card); color: var(--ink); cursor: pointer; }
+  .gr-tries button[aria-pressed=true], .gr-len[aria-pressed=true] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .gr-rows { margin: 16px 0 0; }
+  .gr-row { display: grid; grid-template-columns: 4.6rem minmax(0,1fr); gap: 0 14px; align-items: end; padding: 6px 0; border-top: 1px solid var(--rule); }
+  .gr-k { font-family: var(--display); font-style: italic; font-size: 16px; color: var(--muted); padding-bottom: 8px; }
+  .zh { font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+  .gr-line { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+  .gc { display: inline-flex; flex-direction: column; align-items: center; min-width: 2.1em; }
+  .gc .py { font-family: var(--display); font-style: italic; font-size: 14px; color: var(--accent2); }
+  .gc .ch { font-size: clamp(24px, 4.4vw, 36px); line-height: 1.15; color: var(--ink); }
+  .gc .mk { font-family: var(--mono); font-size: 11px; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 3px; padding-top: 2px; align-self: stretch; text-align: center; }
+  .gc.r .ch, .gc.r .mk { color: var(--accent); } .gc.r .mk { border-top: 2px solid var(--accent); }
+  .gc.a .ch, .gc.a .mk { color: var(--accent2); } .gc.a .mk { border-top: 2px solid var(--accent2); }
+  .gr-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 10px 20px; margin-top: 12px; }
+  .gr-acc { font-family: var(--display); font-size: 22px; line-height: 1.3; color: var(--ink); }
+  .gr-acc b { font-weight: 600; font-size: 1.5em; color: var(--accent2); }
+  .gr-cap { font-family: var(--sans); font-size: 14px; color: var(--muted); margin: 12px 0 0; line-height: 1.5; max-width: 64ch; }
+  @media (max-width: 520px) { .gr-row { grid-template-columns: 1fr; } .gr-k { padding-bottom: 0; } .gc { min-width: 1.7em; } }
 </style>
 </head>
 <body>
@@ -336,24 +360,34 @@
     <p>
       The grader aligns the transcript against the original with
       <code>difflib.SequenceMatcher</code>, so a skipped character doesn't shift
-      every mark after it the way it would if the two strings were zipped together. Whisper often writes
+      every mark after it. Whisper often writes
       Mandarin in Traditional characters whatever the book uses, so both sides are
       converted to Simplified before comparing (学 and 學 count as the same), while
       the display keeps the book's own characters.
     </p>
     <p>
       Lenient mode adds a sound check. Where the alignment finds a substitution, it
-      compares the pinyin of the two characters, and a match is marked amber and
-      counts toward the score. Mandarin has many homophones, and a learner who said
+      compares the pinyin of the two characters, ignoring tone by default, and a
+      match counts toward the score (amber in the app). Mandarin has many homophones, and a learner who said
       the right syllable has done what the exercise asks even when Whisper picks a
       different character.
     </p>
-    <div class="term"><pre><span class="c">$ python3 mandarin_learner.py --grade "我是學生" "我是學森"</span>
-original : 我是學生
-heard    : 我是學森<!-- ledger-allow: checkmark, emoji -->
-marks    : <span class="g">✓✓✓</span><span class="y">✗</span>
-accuracy : 75%   auto_advance=False</pre></div>
-    <p style="margin-top:11px;font-family:var(--sans);font-size:14.5px;color:var(--muted)">The command-line grader, run 2026-10-26. 生 (shēng) and 森 (sēn) differ in sound, so Lenient mode would not rescue this one.</p>
+    <div class="grader" id="grader">
+      <p class="gr-q">Pick what Whisper heard for <span lang="zh-Hans">我们常说某个国家</span></p>
+      <div class="gr-tries" role="group" aria-label="What Whisper heard" id="gr-tries"></div>
+      <div class="gr-rows">
+        <div class="gr-row"><span class="gr-k">Heard</span><span class="gr-line zh" id="gr-heard" lang="zh"></span></div>
+        <div class="gr-row"><span class="gr-k">Graded</span><span class="gr-line zh" id="gr-marks" lang="zh-Hans"></span></div>
+      </div>
+      <div class="gr-foot">
+        <span class="gr-acc" id="gr-acc" aria-live="polite"></span>
+        <button type="button" class="gr-len" id="gr-len" aria-pressed="false">Lenient mode: off</button>
+      </div>
+      <p class="gr-cap">Every result here is the real output of <code>grade()</code> in
+        <code>mandarin_learner_engine.py</code>, run on these six transcripts on 2026-10-28 and
+        stored in the page; nothing is recomputed in the browser. Pinyin from the engine's
+        <code>annotate()</code>.</p>
+    </div>
   </section>
 
   <section class="stop">
@@ -430,5 +464,33 @@ accuracy : 75%   auto_advance=False</pre></div>
     </p>
   </footer>
 </div>
+
+<script>
+(function () {
+  var D = [{"label":"Read correctly","heard":"我们常说某个国家","strict":{"acc":1.0,"adv":true,"marks":["g","g","g","g","g","g","g","g"]},"lenient":{"acc":1.0,"adv":true,"marks":["g","g","g","g","g","g","g","g"]},"py":["wǒ","men","cháng","shuō","mǒu","gè","guó","jiā"]},{"label":"Whisper writes Traditional","heard":"我們常說某個國家","strict":{"acc":1.0,"adv":true,"marks":["g","g","g","g","g","g","g","g"]},"lenient":{"acc":1.0,"adv":true,"marks":["g","g","g","g","g","g","g","g"]},"py":["wǒ","men","cháng","shuō","mǒu","gè","guó","jiā"]},{"label":"One character skipped","heard":"我们说某个国家","strict":{"acc":0.875,"adv":false,"marks":["g","g","r","g","g","g","g","g"]},"lenient":{"acc":0.875,"adv":false,"marks":["g","g","r","g","g","g","g","g"]},"py":["wǒ","men","shuō","mǒu","gè","guó","jiā"]},{"label":"Same syllable, other tone","heard":"我们常说某个过家","strict":{"acc":0.875,"adv":false,"marks":["g","g","g","g","g","g","r","g"]},"lenient":{"acc":1.0,"adv":true,"marks":["g","g","g","g","g","g","a","g"]},"py":["wǒ","men","cháng","shuō","mǒu","gè","guò","jiā"]},{"label":"A different word","heard":"我们常说那个国家","strict":{"acc":0.875,"adv":false,"marks":["g","g","g","g","r","g","g","g"]},"lenient":{"acc":0.875,"adv":false,"marks":["g","g","g","g","r","g","g","g"]},"py":["wǒ","men","cháng","shuō","nà","ge","guó","jiā"]},{"label":"Stopped halfway","heard":"我们常说","strict":{"acc":0.5,"adv":false,"marks":["g","g","g","g","r","r","r","r"]},"lenient":{"acc":0.5,"adv":false,"marks":["g","g","g","g","r","r","r","r"]},"py":["wǒ","men","cháng","shuō"]}];
+  var ORIG = "我们常说某个国家", ORIG_PY = D[0].py;
+  var tries = document.getElementById("gr-tries"), len = document.getElementById("gr-len");
+  var heard = document.getElementById("gr-heard"), marks = document.getElementById("gr-marks"), acc = document.getElementById("gr-acc");
+  var cur = 3, lenient = false, LABEL = { g: "ok", r: "missed", a: "sound" };
+  function cell(ch, py, cls, mk) {
+    return '<span class="gc ' + (cls || "") + '"><span class="py">' + (py || "&nbsp;") + '</span><span class="ch">' + ch + '</span>' + (mk ? '<span class="mk">' + mk + '</span>' : "") + "</span>";
+  }
+  D.forEach(function (d, i) {
+    var b = document.createElement("button"); b.type = "button"; b.textContent = d.label;
+    b.addEventListener("click", function () { cur = i; show(); });
+    tries.appendChild(b);
+  });
+  len.addEventListener("click", function () { lenient = !lenient; show(); });
+  function show() {
+    var d = D[cur], r = lenient ? d.lenient : d.strict;
+    Array.prototype.forEach.call(tries.children, function (b, i) { b.setAttribute("aria-pressed", i === cur); });
+    len.setAttribute("aria-pressed", lenient); len.textContent = "Lenient mode: " + (lenient ? "on" : "off");
+    heard.innerHTML = Array.from(d.heard).map(function (c, i) { return cell(c, d.py[i]); }).join("");
+    marks.innerHTML = Array.from(ORIG).map(function (c, i) { return cell(c, ORIG_PY[i], r.marks[i], LABEL[r.marks[i]]); }).join("");
+    acc.innerHTML = "<b>" + Math.round(r.acc * 1000) / 10 + "%</b> " + (r.adv ? "moves on to the next line" : "stays on this line (90% needed)");
+  }
+  show();
+})();
+</script>
 </body>
 </html>
