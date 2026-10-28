@@ -22,7 +22,7 @@ document is the original design spec, kept for rationale.
 
 **Where it lives**
 - GitHub (public): https://github.com/lyhjeremy/mandarin-learning-reader
-- Showcase (GitHub Pages): https://lyhjeremy.github.io/mandarin-learning-reader/
+- Landing page (GitHub Pages): https://lyhjeremy.github.io/mandarin-learning-reader/
 - The project folder itself is the git repo (branch `main`).
 
 **What was built**
@@ -34,7 +34,7 @@ document is the original design spec, kept for rationale.
   centred karaoke stage, custom rounded transport buttons with the **keyboard key
   printed on each**, a circular Play, a progress scrubber + live score, dark by
   default with a light toggle.
-- `README.md`, `index.html` (showcase), `requirements.txt`, `docs/` screenshots.
+- `README.md`, `index.html` (landing page), `requirements.txt`, `docs/` screenshots.
 
 **How to run**
 ```bash
@@ -161,7 +161,7 @@ This project is a sibling of the EPUB→Audiobook app. **Reuse these wholesale**
 ```
 
 - **`mandarin_learner_engine.py`.** No UI imports, safe to import anywhere. All
-  real work. Target ~600–800 lines.
+  the processing lives here. Target ~600–800 lines.
 - **`mandarin_learner_gui.py`.** Tkinter GUI: chapter list + reader + controls +
   mic feedback. Target ~1000–1300 lines.
 - **`mandarin_learner.py`.** CLI front-end for headless use / testing (list
@@ -217,8 +217,7 @@ The single most important **new** engine function. Rules agreed with the builder
 - **No hard upper cap.** If a single sentence is 18–20+ characters, keep it whole.
 - **Pack short neighbors.** If a sentence is very short (≈ ≤ 5 characters) and the
   next one is also short, **merge them** so units aren't awkwardly tiny. Aim for a
-  comfortable **~7–15 characters** per displayed unit, but never split a real
-  sentence to hit that, packing only ever *joins*, never *cuts*.
+  comfortable **~7–15 characters** per displayed unit, but never split a full sentence to hit that, packing only ever *joins*, never *cuts*.
 - **Count by characters**, not words (CJK). Whitespace/punctuation don't count
   toward the "length" for packing decisions but stay in the displayed text.
 
@@ -379,7 +378,7 @@ def transcribe(path):
 ### 5.8 [CORE] Character-level pronunciation grading: *new, the "green/red" logic*
 Agreed approach: **character-by-character** comparison of the original text vs.
 Whisper's transcript. But because Whisper may insert/delete characters, do a
-proper **alignment** rather than a naive `zip`, so a single missed character
+proper **alignment** (a naive `zip` would fail here), so a single missed character
 doesn't cascade into everything after it being marked wrong.
 
 ```python
@@ -428,7 +427,7 @@ def grade(original_text, heard_text):
   differ, compare their **pinyin** (optionally tone-insensitive) and count a
   "sound match" as correct (perhaps a different color, e.g. amber = right sound,
   wrong character). Build the strict version first; add tolerance only if the
-  strict version frustrates real use.
+  strict version frustrates everyday use.
 - **[FALLBACK, no auto-advance]** If Whisper accuracy on the user's mic is too
   low to trust the 90% gate, **decouple grading from advancing**: still show
   green/red as feedback, but always require a manual **Next**. This preserves the
@@ -560,7 +559,7 @@ because of the clean engine seams.
 4. **[FALLBACK]** If still unusable: ship **without live grading.** Keep the
    karaoke read-along (play, read pinyin, manual Next). Add a "Record & check"
    button that's clearly optional/experimental. This is the V-simple version and
-   is still a genuinely useful Mandarin reader.
+   is still a useful Mandarin reader.
 
 **B. Grading feels too strict (homophones/near-misses marked red)**
 1. Add **pinyin-level tolerance** (5.8 OPTIONAL): compare pinyin when characters
@@ -624,7 +623,7 @@ Section 9.
 6. **Convert the display text only**; run pinyin and grading on the *displayed*
    script so the user practices what they see.
 7. **Every hard piece has a fallback** and lives behind a clean seam, so the app
-   degrades gracefully instead of failing wholesale.
+   loses one feature at a time when something fails, and keeps working.
 8. **Thread + queue + `after()` poll** for all blocking work; never touch Tk from
    a worker thread.
 9. **Persist settings + per-book resume** to a `$HOME` dotfile.

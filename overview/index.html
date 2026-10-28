@@ -300,11 +300,12 @@
     <p class="eyebrow">The gap</p>
     <h2>Reading practice that checks what you said</h2>
     <p>
-      Most Chinese reading tools show the text and at best read it to you. Nothing
-      checks whether what you said matched the characters on the page. A tutor does
-      that, at a price and on a schedule. This app does the mechanical part of the
-      job (did you say the characters on screen?) for free, whenever you happen to
-      be reading.
+      I'm a Cantonese speaker from Hong Kong learning Mandarin, and I read
+      Traditional characters more easily than Simplified. Most Chinese reading tools
+      show the text and at best read it to you; checking whether what you said
+      matched the characters on the page is left to a tutor, who costs money and
+      keeps a schedule. This app does the mechanical part of that job (did you say
+      the characters on screen?) for free, whenever you happen to be reading.
     </p>
   </section>
 
@@ -334,8 +335,8 @@
     <h2>Alignment, so one slip doesn't cascade</h2>
     <p>
       The grader aligns the transcript against the original with
-      <code>difflib.SequenceMatcher</code> rather than zipping the two strings, so a
-      skipped character doesn't shift every mark after it. Whisper often writes
+      <code>difflib.SequenceMatcher</code>, so a skipped character doesn't shift
+      every mark after it the way it would if the two strings were zipped together. Whisper often writes
       Mandarin in Traditional characters whatever the book uses, so both sides are
       converted to Simplified before comparing (学 and 學 count as the same), while
       the display keeps the book's own characters.
@@ -380,11 +381,12 @@ accuracy : 75%   auto_advance=False</pre></div>
 
   <section class="stop stop--warn">
     <p class="eyebrow">Limitations</p>
-    <h2>It checks characters, not tones</h2>
+    <h2>It grades characters and leaves tones unchecked</h2>
     <p>
-      The score compares what Whisper heard with the characters on screen. That is a
-      proxy for pronunciation, not a tone assessment. Whisper can be more forgiving
-      than a native listener, and it can mishear a correct reading. Lenient mode
+      The score compares what Whisper heard with the characters on screen, which
+      makes it a proxy for pronunciation; it does not assess tones. Whisper can be
+      more forgiving than a native listener, and it can also mishear a correct
+      reading. Lenient mode
       ignores tones by default when it compares pinyin.
     </p>
     <p>
